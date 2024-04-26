@@ -208,7 +208,7 @@ const Transfer = () => {
                 </div>
                 <Form layout="vertical" form={form} onFinish={handleFinish}>
                   <Form.Item
-                    label="Transfer Name"
+                    label="Transfer File Name"
                     name="transfer_name"
                     rules={[
                       {

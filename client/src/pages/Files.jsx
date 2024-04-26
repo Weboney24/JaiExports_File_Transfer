@@ -127,7 +127,7 @@ const Files = () => {
   }, [moment()]);
 
   const getIcon = (name) => {
-    console.log(name.split(".")[name.split(".").length - 1])
+    console.log(name.split(".")[name.split(".").length - 1]);
     try {
       switch (name.split(".")[name.split(".").length - 1]) {
         case "pdf":
@@ -170,7 +170,7 @@ const Files = () => {
             </h1>
           </div>
           <p className="line-clamp-1 text-gray-400 pt-2">
-            Transfer Name : {_.get(datas, "[0].transfer_name", [])}
+            Transfer File Name : {_.get(datas, "[0].transfer_name", [])}
           </p>
           <div className={`font-semibold flex flex-col items-star  pt-4`}>
             {dates.seconds() < 0 ? (
