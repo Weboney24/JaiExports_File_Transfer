@@ -1,0 +1,100 @@
+* {
+  margin: 0;
+  padding: 0;
+  scrollbar-width: none !important;
+}
+
+@font-face {
+  font-family: "Jairo";
+  src: url("./assets/font/ireAHz.ttf");
+}
+
+:root {
+  --primary-font: "Jairo";
+  --secondary-font: "Arial";
+  --primary-color: #ffaa0d;
+  --secondary-color: #29354c;
+  --third-color: #ffaa0d;
+}
+
+.ant-table-content {
+  scrollbar-width: auto !important;
+}
+
+.ant-input::placeholder {
+  color: #6b7280 !important;
+  font-family: var(--secondary-font);
+}
+
+.ant-form-vertical .ant-form-item-label > label {
+  font-family: var(--secondary-font) !important;
+  font-weight: bold !important;
+}
+
+:where(.css-dev-only-do-not-override-djtmh8).ant-form-item
+  .ant-form-item-label
+  > label.ant-form-item-required:not(
+    .ant-form-item-required-mark-optional
+  )::before,
+:where(.css-dev-only-do-not-override-djtmh8).ant-form-item
+  .ant-form-item-explain-error {
+  color: var(--primary-color);
+  font-weight: bold !important;
+  font-family: var(--secondary-font) !important;
+}
+:where(.css-dev-only-do-not-override-djtmh8)[class^="ant-picker"]
+  [class^="ant-picker"],
+:where(.css-dev-only-do-not-override-djtmh8)[class*=" ant-picker"]
+  [class^="ant-picker"],
+:where(.css-dev-only-do-not-override-djtmh8)[class^="ant-picker"]
+  [class*=" ant-picker"],
+:where(.css-dev-only-do-not-override-djtmh8)[class*=" ant-picker"]
+  [class*=" ant-picker"] {
+  font-family: var(--secondary-font) !important;
+}
+
+:where(
+    .css-dev-only-do-not-override-djtmh8
+  ).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled) {
+  border: 1px solid var(--primary-color) !important;
+}
+
+.ant-table-thead .ant-table-cell {
+  background-color: var(--third-color) !important;
+  color: white !important;
+  font-family: var(--secondary-font) !important;
+}
+
+.ant-table-tbody > tr > td {
+  font-family: var(--secondary-font) !important;
+  font-size: 15px !important;
+  color: black !important;
+}
+
+.ant-btn-primary {
+  background-color: var(--primary-color) !important;
+}
+
+.ant-input-group,
+.ant-input-outlined {
+  height: 40px !important;
+}
+.ant-input-outlined {
+  border-radius: 0px 0px !important;
+}
+
+:where(.css-dev-only-do-not-override-djtmh8).ant-pagination
+  .ant-pagination-item-active {
+  border: 1px solid var(--primary-color) !important;
+}
+:where(.css-dev-only-do-not-override-djtmh8).ant-pagination
+  .ant-pagination-item-active
+  a {
+  color: var(--primary-color) !important;
+}
+
+/* drawer */
+:where(.css-dev-only-do-not-override-djtmh8).ant-drawer .ant-drawer-body,
+:where(.css-dev-only-do-not-override-djtmh8).ant-drawer .ant-drawer-body {
+  padding: 0px !important;
+}
