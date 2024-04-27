@@ -4,11 +4,15 @@ import { Form, Input, Button, notification } from "antd";
 import { authUser } from "../helper/api_helper";
 import _ from "lodash";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { changeRole } from "../helper/state/slice/user.slice";
 
 const Sighin = () => {
   const [form] = Form.useForm();
+
+  const userData = useSelector((data) => data);
+
+  console.log(userData);
 
   const navigate = useNavigate();
 
@@ -40,7 +44,9 @@ const Sighin = () => {
       });
       if (_.get(result, "data.data.role", "") === "admin") {
         navigate("/dashboard");
+        localStorage.setItem("kD7&z9B*pQ#2sL!5", "G$6rT@wP3qY!8nA");
       } else {
+        localStorage.setItem("kD7&z9B*pQ#2sL!5", "X#4sN@9cV2mW!7bJ");
         localStorage.setItem("kD7&z9B*pQ#2sL!5", "X#4sN@9cV2mW!7bJ");
         navigate("/make_transfer");
       }

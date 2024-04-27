@@ -122,3 +122,7 @@ export const changePassword = async (formData) =>
 
 export const checkUserRole = async () =>
   await axiosCustomRequest.get(`${base_url}/dashboard/check_user_role`);
+
+
+  export const deleteLinkParser = async (id) =>
+  await axios.get(`${base_url}/delete_link_after_expire`);

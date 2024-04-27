@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import _ from "lodash";
 import {
   client_url,
+  deleteLinkParser,
   getLinkStatus,
   getPerticularFile,
   server_url,
@@ -72,19 +73,28 @@ const Files = () => {
   };
 
   useEffect(() => {
-    if (linkStatus) {
-      if (
-        _.get(navigate, "pathname", "").split("/")[2].slice(-6) === "b3P3ts" &&
-        !verified
-      ) {
-        setOpen(true);
-        setVerified(false);
+    try {
+      deleteLinkParser();
+    } catch (err) {}
+  }, [location.pathname]);
+
+  useEffect(() => {
+    try {
+      if (linkStatus) {
+        if (
+          _.get(navigate, "pathname", "").split("/")[2].slice(-6) ===
+            "b3P3ts" &&
+          !verified
+        ) {
+          setOpen(true);
+          setVerified(false);
+        } else {
+          fetchData();
+        }
       } else {
-        fetchData();
+        checkLinkStatus();
       }
-    } else {
-      checkLinkStatus();
-    }
+    } catch (err) {}
   }, [_.get(navigate, "pathname", "").split("/")[2], linkStatus]);
 
   const handlePassword = async (value) => {
@@ -110,9 +120,18 @@ const Files = () => {
       await updateDownloadCount({
         id: _.get(datas, "[0]._id", []),
         user_id: _.get(datas, "[0].user_id", []),
-        link: `${client_url}${_.get(datas, "[0].transfer_link", [])}`,
+        link: `${server_url}/${_.get(values, "filename", [])}`,
       });
-      window.open(values.location);
+
+      var link = document.createElement("a");
+      link.href = `${server_url}/${_.get(values, "filename", [])}`;
+
+      link.download = _.get(values, "originalname", []);
+
+      document.body.appendChild(link);
+      link.click();
+
+      document.body.removeChild(link);
       setLinkStatus(true);
     } catch (err) {
       setLinkStatus(true);
@@ -127,7 +146,6 @@ const Files = () => {
   }, [moment()]);
 
   const getIcon = (name) => {
-    console.log(name.split(".")[name.split(".").length - 1]);
     try {
       switch (name.split(".")[name.split(".").length - 1]) {
         case "pdf":
@@ -222,15 +240,15 @@ const Files = () => {
                   key={index}
                 >
                   <div className="pt-4 text-secondary">
-                    {getIcon(res.name) || (
+                    {getIcon(res.originalname) || (
                       <IconHelper.fileIcon className="!text-secondary" />
                     )}
                   </div>
                   <abbr
-                    title={res.name}
+                    title={res.originalname}
                     className="!line-clamp-1 no-underline w-[90%] "
                   >
-                    {res.name}
+                    {res.originalname}
                   </abbr>
                   <Tag className="!text-[10px] bg-white !border-transparent flex items-center gap-x-2">
                     <MdSdStorage />

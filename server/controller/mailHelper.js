@@ -8,8 +8,8 @@ const sendMailWithHelper = async (email, data, type) => {
     let config = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "weboneycbe@gmail.com",
-        pass: "ldkd dtxp cmiz ysmg",
+        user: "jaihandloom@gmail.com",
+        pass: "rqrx xsgv lqmf uthn",
       },
       port: 587,
       secure: false,

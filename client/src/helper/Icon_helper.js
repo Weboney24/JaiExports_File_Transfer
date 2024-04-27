@@ -99,12 +99,9 @@ export const navbar = [
   },
 ];
 
-export const copyHelper = (value) => {
+export const copyHelper = async (value) => {
   try {
-    window.navigator.clipboard.writeText(value);
+    await window.navigator.clipboard.writeText(value);
     message.success("Link copied");
-    console.log("enter");
-  } catch (err) {
-    console.log(err);
-  }
+  } catch (err) {}
 };

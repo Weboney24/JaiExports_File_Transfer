@@ -264,6 +264,38 @@ const checkUserRole = async (req, res) => {
   }
 };
 
+const deleteLinkParser = async (req, res) => {
+  try {
+    const data = await Transfer.find({
+      expire_date: {
+        $lt: new Date(),
+      },
+    });
+
+    if (!_.isEmpty(data)) {
+      
+      _.get(data, "[0].files", []).map((res) => {
+        if (
+          fs.existsSync(
+            `${path.join(__dirname, `../public/uploads/${res.filename}`)}`
+          )
+        ) {
+          fs.unlinkSync(
+            path.join(__dirname, `../public/uploads/${res.filename}`)
+          );
+        }
+      });
+
+      return res.status(200).send({ data: "expired" });
+    } else {
+      return res.status(200).send({ data: "not expired" });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "err" });
+  }
+};
+
 module.exports = {
   getAllCounts,
   getPerticularFile,
@@ -275,4 +307,5 @@ module.exports = {
   updateDownloadCount,
   changePassword,
   checkUserRole,
+  deleteLinkParser,
 };
