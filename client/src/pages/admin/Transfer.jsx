@@ -24,6 +24,7 @@ import moment from "moment";
 import DefaultHeader from "../DefaultHeader";
 import { TbArrowsRandom } from "react-icons/tb";
 import { FaCopy } from "react-icons/fa";
+import CopyLink from "../../component/CopyLink";
 
 const Transfer = () => {
   const [files, setFiles] = useState([]);
@@ -364,12 +365,10 @@ const Transfer = () => {
           <div className="flex flex-col items-center gap-y-4 pt-10">
             <div className="text-sm   gap-x-4 items-center flex justify-start w-full px-6 ">
               <span>Transfer Link :</span>
-              <FaCopy
-                onClick={() => {
-                  copyHelper(`${client_url}${_.get(modalData, "data", "")}`);
-                }}
-                className={`text-primary hover:text-secondary cursor-pointer`}
-              />
+
+              <div className="pt-4">
+                {CopyLink(`${client_url}${_.get(modalData, "data", "")}`)}
+              </div>
               <Link
                 target="_blank"
                 to={`${client_url}${_.get(modalData, "data", "")}`}

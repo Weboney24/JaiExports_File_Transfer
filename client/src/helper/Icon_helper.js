@@ -27,6 +27,7 @@ import { SiJpeg } from "react-icons/si";
 import { BsFiletypeMp3, BsFiletypeMp4 } from "react-icons/bs";
 import { HiOutlinePhoto } from "react-icons/hi2";
 import { message } from "antd";
+import { TiTick } from "react-icons/ti";
 
 export const IconHelper = {
   dashboard: MdOutlineDashboard,
@@ -58,6 +59,7 @@ export const IconHelper = {
   webp: HiOutlinePhoto,
   mp4: BsFiletypeMp4,
   excel: FaRegFileExcel,
+  successTickIcon: TiTick,
 };
 
 export const navbar = [

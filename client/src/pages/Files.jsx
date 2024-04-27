@@ -175,15 +175,18 @@ const Files = () => {
       } min-h-screen overflow-hidden center_div bg-gradient-to- from-[#f7f7f7] to-[rgba(255,250,180,0.03)] bg-no-repeat bg-cover bg-center text-primary items-start font-Poppins lining-nums`}
     >
       {!linkStatus ? (
-        <img
-          src="https://cdn.dribbble.com/users/1186261/screenshots/3718681/_______.gif"
-          alt=""
-        />
+        <div className="w-screen h-screen center_div">
+          <img
+            src={Logo}
+            className="w-[100px] h-[80px] animate-bounce"
+            alt=""
+          />
+        </div>
       ) : (
         <div className=" flex w-[1366px] z-50 flex-col lg:mt-[15vh] mt-[6vh] justify-center  items-center px-4  lg:px-10 gap-y-1">
           <div className="flex  flex-col  items-center gap-y-6 justify-center w-full z-50 ">
             <img src={Logo} alt="" className="lg:w-[5%] w-[20%]  rounded-lg" />
-            <h1 className="text-secondary tracking-wider font-Poppins">
+            <h1 className="text-secondary tracking-wider text-2xl font-Poppins">
               Jai Export Enterprises
             </h1>
           </div>
@@ -191,7 +194,7 @@ const Files = () => {
             Transfer File Name : {_.get(datas, "[0].transfer_name", [])}
           </p>
           <div className={`font-semibold flex flex-col items-star  pt-4`}>
-            {dates.seconds() < 0 ? (
+            {dates?.seconds() < 0 ? (
               "Expired"
             ) : (
               <div className="flex items-center gap-x-2">
@@ -199,26 +202,26 @@ const Files = () => {
                   {
                     name: "Days",
                     value:
-                      dates.days() > 9 ? dates.days() : `0 ${dates.days()}`,
+                      dates.days() > 9 ? dates?.days() : `0 ${dates?.days()}`,
                   },
                   {
                     name: "Hours",
-                    value: dates.hours(),
+                    value: dates?.hours(),
                   },
                   {
                     name: "Minutes",
-                    value: dates.minutes(),
+                    value: dates?.minutes(),
                   },
                   {
                     name: "Seconds",
-                    value: dates.seconds(),
+                    value: dates?.seconds(),
                   },
                 ].map((res, index) => {
                   return (
                     <div className="">
                       <span
                         className={` ${
-                          dates.seconds() < 0
+                          dates?.seconds() < 0
                             ? "text-red-500 bg-white"
                             : "bg-primary text-white"
                         } px-2  min-w-[50px] center_div rounded text-white py-2`}

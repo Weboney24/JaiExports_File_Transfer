@@ -29,6 +29,7 @@ import { FaCopy } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { BsQrCodeScan } from "react-icons/bs";
 import { ImQrcode } from "react-icons/im";
+import CopyLink from "../../component/CopyLink";
 
 const MyTransfer = () => {
   const [data, setData] = useState([]);
@@ -145,12 +146,7 @@ const MyTransfer = () => {
             href={`${client_url}${data}`}
             target="_blank"
           >
-            <FaCopy
-              onClick={() => {
-                copyHelper(`${client_url}${data}`);
-              }}
-              className={`text-primary hover:text-secondary cursor-pointer`}
-            />
+            <div className="pt-4">{CopyLink(`${client_url}${data}`)}</div>
             <Link target="_blank" to={`${client_url}${data}`}>
               <IconHelper.clickLink className={`text-blue-400 !text-[10px]`} />
             </Link>
@@ -406,18 +402,19 @@ const MyTransfer = () => {
 
             <div className="flex items-center gap-x-4">
               <h1>Transfer Link : </h1>
-              <FaCopy
-                onClick={() => {
-                  copyHelper(`${client_url}${newLink}`);
-                }}
-                className={`text-primary hover:text-secondary cursor-pointer`}
-              />
+
+              <div className="pt-4">{CopyLink(`${client_url}${newLink}`)}</div>
               <Link target="_blank" to={`${client_url}${newLink}`}>
                 <IconHelper.clickLink
                   className={`text-blue-400 !text-[10px]`}
                 />
               </Link>
-              <ImQrcode onClick={()=>{setLinks(`${client_url}${newLink}`)}}  className="!text-[12px] cursor-pointer" />
+              <ImQrcode
+                onClick={() => {
+                  setLinks(`${client_url}${newLink}`);
+                }}
+                className="!text-[12px] cursor-pointer"
+              />
             </div>
             <div className="flex items-centers gap-x-5 py-4">
               <div

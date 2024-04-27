@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Divider, Modal, QRCode, Table } from "antd";
+import { Divider, Modal, QRCode, Table, Typography } from "antd";
 
 import _ from "lodash";
 import { filesize } from "filesize";
@@ -10,6 +10,7 @@ import { copyHelper, IconHelper } from "../helper/Icon_helper";
 import DefaultHeader from "./DefaultHeader";
 import { FaCopy } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import CopyLink from "../component/CopyLink";
 
 const AllTransfers = () => {
   const [data, setData] = useState([]);
@@ -99,16 +100,12 @@ const AllTransfers = () => {
       render: (data) => {
         return (
           <div
-            className="text-sm line-clamp-2  gap-x-4 items-center flex justify-center w-[100px] "
+            className="text-sm line-clamp-2  gap-x-4 items-center flex  justify-center w-[100px] "
             href={`${client_url}${data}`}
             target="_blank"
           >
-            <FaCopy
-              onClick={() => {
-                copyHelper(`${client_url}${data}`);
-              }}
-              className={`text-primary hover:text-secondary cursor-pointer`}
-            />
+            <div className="pt-4">{CopyLink(`${client_url}${data}`)}</div>
+
             <Link target="_blank" to={`${client_url}${data}`}>
               <IconHelper.clickLink className={`text-blue-400 !text-[10px]`} />
             </Link>

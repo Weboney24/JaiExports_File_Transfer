@@ -211,15 +211,29 @@ const Users = () => {
       width: 300,
       render: (data) => {
         return (
-          <div className="flex items-center w-full justify-center gap-x-10">
-            <span
+          <div className={` flex items-center w-full justify-center gap-x-10`}>
+            {"admin" === data.role ? (
+              _.get(userData, "userSlice.role", "") === "admin" &&  <span
               onClick={() => {
                 handleEdit(data);
               }}
-              className="center_div gap-x-2 border px-2 rounded-lg py-1 bg-primary !text-white cursor-pointer"
+              className={`
+         center_div gap-x-2 border px-2 rounded-lg py-1 bg-primary !text-white cursor-pointer `}
             >
               <IconHelper.editUserIcon /> update
             </span>
+            ) : (
+              <span
+                onClick={() => {
+                  handleEdit(data);
+                }}
+                className={`
+           center_div gap-x-2 border px-2 rounded-lg py-1 bg-primary !text-white cursor-pointer `}
+              >
+                <IconHelper.editUserIcon /> update
+              </span>
+            )}
+
             <Popconfirm
               onConfirm={() => {
                 handleDelete(data._id);
@@ -228,6 +242,7 @@ const Users = () => {
               cancelText="No"
               title="Are you sure want to delete this user"
               placement="left"
+              className={`${"admin" === data.role ? "invisible" : "visible"}`}
             >
               <span className="center_div gap-x-2 border px-2 rounded-lg py-1 bg-secondary !text-white cursor-pointer">
                 <IconHelper.deleteUserIcon />
