@@ -12,8 +12,13 @@ import {
   Spin,
   DatePicker,
   QRCode,
+  notification,
 } from "antd";
-import { copyHelper, IconHelper } from "../../helper/Icon_helper";
+import {
+  collectFileSize,
+  copyHelper,
+  IconHelper,
+} from "../../helper/Icon_helper";
 import { filesize } from "filesize";
 import _ from "lodash";
 import { client_url, uploadFiles } from "../../helper/api_helper";
@@ -24,7 +29,7 @@ import moment from "moment";
 import DefaultHeader from "../DefaultHeader";
 import { TbArrowsRandom } from "react-icons/tb";
 import { FaCopy } from "react-icons/fa";
-import CopyLink from "../../component/CopyLink";
+import Extra from "./Makeextra/Extra";
 
 const Transfer = () => {
   const [files, setFiles] = useState([]);
@@ -54,6 +59,7 @@ const Transfer = () => {
     name: "file",
     multiple: true,
     onChange(info) {
+      console.log(info, "gk");
       setFiles(info.fileList);
     },
     fileList: files,
@@ -98,6 +104,12 @@ const Transfer = () => {
 
   const handleFinish = async (values) => {
     try {
+      if (collectFileSize(files)?.actualSize > 2000000000) {
+        return notification.error({
+          message:
+            "File size limit exceeded; maximum allowed is 2GB. Please remove or alter files to reduce the size.",
+        });
+      }
       if (aliseName.status === "custom") {
         values.transfer_link = values.transfer_password
           ? values.transfer_link.concat(Date.now()).concat("b3P3ts")
@@ -171,45 +183,58 @@ const Transfer = () => {
       <h1 className="text-3xl font-Texturina flex items-center gap-x-2">
         <IconHelper.fileshare2 /> Make Transfers
       </h1>
+      <h1 className="lining-nums hidden text-end">
+        Total Size : &nbsp;
+        <span className="text-primary font-bold">
+          {filesize(
+            _.sum(
+              files.map((res) => {
+                return res.size;
+              })
+            ),
+            { standard: "jedec" }
+          )}
+        </span>
+      </h1>
       <Divider />
 
-      <div className="w-full flex-col">
-        <div
-          className={`${
-            files.length >= 5 ? "hidden" : "block"
-          } bg-white p-2 shadow-inner rounded-2xl`}
-        >
-          <Dragger {...props} showUploadList={false} maxCount={5}>
-            <div className={`w-full !h-[150px] center_div flex-col gap-y-4`}>
-              <IconHelper.uploadIcon className="!text-6xl !text-gray-500" />
-              <p className="text-sm font-Poppins font-normal leading-relaxed text-gray-500 text-center">
-                Click or drag file to this area to upload <br />
-              </p>
-            </div>
-          </Dragger>
-        </div>
-        <Divider />
-        <div className="center_div">
+      <div className="w-full flex">
+        <div className="center_div items-start  w-[80%]">
           {!_.isEmpty(files) ? (
             <div className="flex items-start gap-y-4 justify-between w-full lg:flex-row flex-col-reverse gap-x-10 lg:px-4">
               {/* form */}
-              <div className="lg:w-[50%] w-full shadow-md p-5 rounded-lg  bg-white flex flex-col gap-y-4">
+              <div className="w-full  p-5 rounded-lg shadow-inner bg-white flex flex-col gap-y-4">
                 <div>
-                  <h1 className="lining-nums">Limit {files.length}/5</h1>
+                  <h1 className="lining-nums">
+                    Limit {collectFileSize(files)?.textAlise}&nbsp;/ 2GB
+                  </h1>
                   <Progress
-                    strokeColor={"#d97706"}
+                    strokeColor={
+                      collectFileSize(files)?.actualSize > 2000000000
+                        ? "red"
+                        : "#d97706"
+                    }
                     percent={
                       !_.isEmpty(files)
-                        ? files.length >= 5
+                        ? collectFileSize(files)?.actualSize >= 2000000000
                           ? 100
-                          : files.length * 20
+                          : (
+                              (collectFileSize(files)?.actualSize /
+                                2000000000) *
+                              100
+                            ).toFixed(1)
                         : ""
                     }
                   />
                 </div>
-                <Form layout="vertical" form={form} onFinish={handleFinish}>
+                <Form
+                  layout="vertical"
+                  form={form}
+                  onFinish={handleFinish}
+                  className="flex flex-wrap gap-x-10 gap-y-2"
+                >
                   <Form.Item
-                    label="Transfer File Name"
+                    label="Transfer Name"
                     name="transfer_name"
                     rules={[
                       {
@@ -220,7 +245,33 @@ const Transfer = () => {
                   >
                     <Input
                       placeholder="Enter Transfer Name"
-                      className="antd_input w-full"
+                      className="antd_input "
+                    />
+                  </Form.Item>
+
+                  <Form.Item label="Description" name="transfer_description">
+                    <Input.TextArea
+                      placeholder="Enter Description"
+                      className="antd_input  !h-[100px]"
+                    />
+                  </Form.Item>
+                  <Form.Item label="Transfer Password" name="transfer_password">
+                    <Input
+                      placeholder="Enter Transfer Password"
+                      className="antd_input  !h-[100px]"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    label="Custom Expiry Date"
+                    name="custom_expire_date"
+                  >
+                    <DatePicker
+                      placeholder="Enter Expiry Date"
+                      className="antd_input  !lining-nums"
+                      use12Hours
+                      showTime
+                      disabledDate={disabledDate}
+                      format={"DD:MM:YYYY HH:mm A"}
                     />
                   </Form.Item>
                   <Form.Item
@@ -243,8 +294,9 @@ const Transfer = () => {
                         message: "Please enter a transfer link",
                       },
                     ]}
+                    className="!w-full"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between !w-full ">
                       <Input
                         addonBefore={client_url}
                         value={aliseName.name}
@@ -252,7 +304,7 @@ const Transfer = () => {
                           handleRandomGenerate(value.target.value);
                         }}
                         placeholder="Enter Transfer link name"
-                        className="antd_input w-[80%]  rounded-r-none"
+                        className="antd_input !w-[80%] rounded-r-none "
                       />
                       <div
                         onClick={() => {
@@ -265,74 +317,12 @@ const Transfer = () => {
                       </div>
                     </div>
                   </Form.Item>
-                  <Form.Item label="Description" name="transfer_description">
-                    <Input.TextArea
-                      placeholder="Enter Description"
-                      className="antd_input w-full !h-[100px]"
-                    />
-                  </Form.Item>
-                  <Form.Item label="Transfer Password" name="transfer_password">
-                    <Input
-                      placeholder="Enter Transfer Password"
-                      className="antd_input w-full !h-[100px]"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Custom Expiry Date"
-                    name="custom_expire_date"
-                  >
-                    <DatePicker
-                      placeholder="Enter Expiry Date"
-                      className="antd_input w-full !lining-nums"
-                      use12Hours
-                      showTime
-                      disabledDate={disabledDate}
-                      format={"DD:MM:YYYY HH:mm A"}
-                    />
-                  </Form.Item>
                   <Form.Item>
                     <Button block className="primary_btn" htmlType="submit">
                       Upload
                     </Button>
                   </Form.Item>
                 </Form>
-              </div>
-              {/* uploded files */}
-              <div className="lg:w-[50%] shadow-md w-full pt-5 p-5 rounded-lg flex flex-col gap-y-6">
-                <h1 className="lining-nums text-end">
-                  Total Size : &nbsp;
-                  <span className="text-primary font-bold">
-                    {filesize(
-                      _.sum(
-                        files.map((res) => {
-                          return res.size;
-                        })
-                      ),
-                      { standard: "jedec" }
-                    )}
-                  </span>
-                </h1>
-                {files.map((res, index) => {
-                  return (
-                    <Tag
-                      key={index}
-                      className="w-full  flex justify-between items-center !rounded-lg bg-white h-[50px] shadow-inner"
-                    >
-                      <h1 className="line-clamp-1 w-[50%] text-black font-Poppins overflow-hidden">
-                        {res.name}
-                      </h1>
-                      <div className="flex items-center justify-end gap-x-4 ">
-                        <h1>{filesize(res.size, { standard: "jedec" })}</h1>
-                        <IconHelper.deleteIcon
-                          onClick={() => {
-                            onDelete(res);
-                          }}
-                          className="text-primary cursor-pointer !text-2xl"
-                        />
-                      </div>
-                    </Tag>
-                  );
-                })}
               </div>
             </div>
           ) : (
@@ -346,6 +336,28 @@ const Transfer = () => {
             />
           )}
         </div>
+        <div className="flex items-start  justify-start flex-col w-[20%] gap-y-2">
+          <div className={` bg-white  shadow-inner w-[100%]  h-[inherit]`}>
+            <Dragger
+              {...props}
+              showUploadList={false}
+              maxCount={5}
+              className="!bg-white"
+            >
+              <div className={`w-full !h-[100px] center_div flex-col gap-y-4`}>
+                <IconHelper.uploadIcon className="!text-2xl !text-gray-500" />
+                <p className="text-sm font-Poppins font-normal leading-relaxed text-gray-500 text-center">
+                  Click or drag file to this area to upload <br />
+                </p>
+              </div>
+            </Dragger>
+          </div>
+          {/* uploded files */}
+          <div className="flex flex-col w-[100%]   gap-y-2 items-center  min-h-[100px]">
+            <Extra files={files} onDelete={onDelete} />
+          </div>
+        </div>
+        {/* <Divider /> */}
       </div>
 
       <Modal
@@ -365,10 +377,12 @@ const Transfer = () => {
           <div className="flex flex-col items-center gap-y-4 pt-10">
             <div className="text-sm   gap-x-4 items-center flex justify-start w-full px-6 ">
               <span>Transfer Link :</span>
-
-              <div className="pt-4">
-                {CopyLink(`${client_url}${_.get(modalData, "data", "")}`)}
-              </div>
+              <FaCopy
+                onClick={() => {
+                  copyHelper(`${client_url}${_.get(modalData, "data", "")}`);
+                }}
+                className={`text-primary hover:text-secondary cursor-pointer`}
+              />
               <Link
                 target="_blank"
                 to={`${client_url}${_.get(modalData, "data", "")}`}

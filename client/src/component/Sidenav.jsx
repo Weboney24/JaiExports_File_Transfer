@@ -9,7 +9,7 @@ import { Drawer } from "antd";
 import { IoIosArrowForward } from "react-icons/io";
 import { RxHamburgerMenu } from "react-icons/rx";
 import DefaultHeader from "../pages/DefaultHeader";
-import { checkUserRole, deleteLinkParser } from "../helper/api_helper";
+import { checkUserRole } from "../helper/api_helper";
 import { changeRole } from "../helper/state/slice/user.slice";
 
 const Sidenav = () => {
@@ -44,8 +44,6 @@ const Sidenav = () => {
       }
     }
   }, [location.pathname, userData.role]);
-
-  
 
   const verifyUserRole = async () => {
     try {
@@ -126,7 +124,7 @@ const Sidenav = () => {
         <SideNavbars />
       </Drawer>
       <RxHamburgerMenu
-        className="cursor-pointer top-0 right-0 z-50  bg-primary !text-xl p-1 m-2 mt-4 !text-secondary absolute lg:hidden block"
+        className="cursor-pointer top-0 right-0 z-50 bg-primary !text-xl p-1 !text-secondary absolute lg:hidden block"
         onClick={() => {
           setOpen(true);
         }}

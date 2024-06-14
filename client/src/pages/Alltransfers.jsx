@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Divider, Modal, QRCode, Table, Typography } from "antd";
+import { Divider, Modal, QRCode, Table, Tooltip } from "antd";
 
 import _ from "lodash";
 import { filesize } from "filesize";
@@ -10,7 +10,7 @@ import { copyHelper, IconHelper } from "../helper/Icon_helper";
 import DefaultHeader from "./DefaultHeader";
 import { FaCopy } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import CopyLink from "../component/CopyLink";
+import { MdOutlineDocumentScanner } from "react-icons/md";
 
 const AllTransfers = () => {
   const [data, setData] = useState([]);
@@ -48,23 +48,26 @@ const AllTransfers = () => {
     {
       title: "User",
       dataIndex: "user_id",
+      width: 100,
       render: (data) => {
         return (
-          <span
-            className={`capitalize ${
-              _.get(data, "name", "") === "admin"
-                ? "text-secondary"
-                : "text-primary"
-            } font-semibold cursor-pointer flex items-center gap-x-2`}
-          >
-            {_.get(data, "name", "")}
-          </span>
+          <Tooltip title={_.get(data, "name", "")}>
+            <h1
+              className={`capitalize ${
+                _.get(data, "name", "") === "admin"
+                  ? "text-secondary"
+                  : "text-primary"
+              } font-semibold cursor-pointer !line-clamp-1 flex items-center  gap-x-2`}
+            >
+              {_.get(data, "name", "")}
+            </h1>
+          </Tooltip>
         );
       },
     },
 
     {
-      title: "Scan to share",
+      title: "Scan",
       dataIndex: "transfer_link",
       align: "center",
       render: (data) => {
@@ -73,12 +76,9 @@ const AllTransfers = () => {
             onClick={() => {
               setLinks(client_url + data);
             }}
-            className="w-[100px] center_div"
+            className="center_div"
           >
-            <QRCode
-              value={`${client_url}${data}`}
-              className="!w-[50px] !h-[50px] cursor-pointer animate-pulse"
-            />
+            <MdOutlineDocumentScanner className="cursor-pointer" />
           </div>
         );
       },
@@ -100,12 +100,16 @@ const AllTransfers = () => {
       render: (data) => {
         return (
           <div
-            className="text-sm line-clamp-2  gap-x-4 items-center flex  justify-center w-[100px] "
+            className="text-sm line-clamp-2  gap-x-4 items-center flex justify-center w-[100px] "
             href={`${client_url}${data}`}
             target="_blank"
           >
-            <div className="pt-4">{CopyLink(`${client_url}${data}`)}</div>
-
+            <FaCopy
+              onClick={() => {
+                copyHelper(`${client_url}${data}`);
+              }}
+              className={`text-primary hover:text-secondary cursor-pointer`}
+            />
             <Link target="_blank" to={`${client_url}${data}`}>
               <IconHelper.clickLink className={`text-blue-400 !text-[10px]`} />
             </Link>
@@ -117,7 +121,11 @@ const AllTransfers = () => {
       title: "Transfer Name",
       dataIndex: "transfer_name",
       render: (data) => {
-        return <div className="capitalize w-[100px]">{data}</div>;
+        return (
+          <Tooltip title={data}>
+            <div className="capitalize w-[100px] line-clamp-1">{data}</div>
+          </Tooltip>
+        );
       },
     },
 
@@ -152,33 +160,27 @@ const AllTransfers = () => {
       },
     },
     {
-      title: "Date",
-      dataIndex: "createdAt",
-      render: (data) => {
-        return (
-          <div className="flex !min-w-[100px]">{moment(data).format("ll")}</div>
-        );
-      },
-    },
-    {
-      title: <div>Expired In</div>,
+      title: <div>Transfer / Expired Date </div>,
       dataIndex: "expire_date",
-      render: (data) => {
+      render: (data, all) => {
         let expDate = moment.duration(moment(data).diff(new Date()));
-
         return (
           <div
-            className={`text-sm font-semibold  ${
-              expDate.seconds() < 0 ? "text-red-500 " : "text-primary"
+            className={`text-sm flex gap-x-2 !min-w-[100px] ${
+              expDate.seconds() < 0 ? "text-secondary" : ""
             } `}
           >
-            {expDate.seconds() < 0
-              ? "Expired"
-              : `${expDate.days()}:${expDate.hours()}:${expDate.minutes()}:${expDate.seconds()}`}
+            <div>{moment(all.createdAt).format("DD-MMMM-YYYY")}</div> / &nbsp;
+            {expDate.seconds() < 0 ? (
+              <span className="text-red-500">Expired</span>
+            ) : (
+              `${moment(data).format("DD-MMMM-YYYY")}`
+            )}
           </div>
         );
       },
     },
+
     {
       title: <div>Password</div>,
       dataIndex: "transfer_password",
@@ -207,6 +209,7 @@ const AllTransfers = () => {
         columns={columns}
         dataSource={data}
         pagination={{ pageSize: 6, position: ["bottomCenter"] }}
+        size="small"
       />
       <Modal
         open={links}

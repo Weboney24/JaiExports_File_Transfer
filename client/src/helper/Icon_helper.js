@@ -1,4 +1,9 @@
-import { MdOutlineDashboard, MdOutlineSettings } from "react-icons/md";
+import {
+  MdEditNote,
+  MdOutlineDashboard,
+  MdOutlineDeleteOutline,
+  MdOutlineSettings,
+} from "react-icons/md";
 import { TbUsers } from "react-icons/tb";
 import { MdPersonAddAlt } from "react-icons/md";
 import { AiOutlineUserDelete } from "react-icons/ai";
@@ -27,7 +32,8 @@ import { SiJpeg } from "react-icons/si";
 import { BsFiletypeMp3, BsFiletypeMp4 } from "react-icons/bs";
 import { HiOutlinePhoto } from "react-icons/hi2";
 import { message } from "antd";
-import { TiTick } from "react-icons/ti";
+import _ from "lodash";
+import { filesize } from "filesize";
 
 export const IconHelper = {
   dashboard: MdOutlineDashboard,
@@ -59,7 +65,8 @@ export const IconHelper = {
   webp: HiOutlinePhoto,
   mp4: BsFiletypeMp4,
   excel: FaRegFileExcel,
-  successTickIcon: TiTick,
+  editIcon: MdEditNote,
+  deleteIcon2: MdOutlineDeleteOutline,
 };
 
 export const navbar = [
@@ -101,9 +108,62 @@ export const navbar = [
   },
 ];
 
-export const copyHelper = async (value) => {
+export const copyHelper = (value) => {
   try {
-    await window.navigator.clipboard.writeText(value);
+    window.navigator.clipboard.writeText(value);
     message.success("Link copied");
-  } catch (err) {}
+    console.log("enter");
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const fileTypeHelper = (type) => {
+  if (
+    ["image/jpeg", "image/png", "image/gif", "image/webp", ""].includes(type)
+  ) {
+    return "https://png.pngtree.com/png-vector/20190508/ourmid/pngtree-gallery-vector-icon-png-image_1028015.jpg";
+  } else if (["application/pdf"].includes(type)) {
+    return "https://media.istockphoto.com/id/1356214382/vector/pdf-file-icon-format-pdf-download-document-image-button-vector-doc-icon.jpg?s=612x612&w=0&k=20&c=Pp0h1HBQynL2JOVu9rMVlcX711XvjXR3UujOuPLck9M=";
+  } else if (
+    [
+      "application/vnd.ms-excel",
+      "application/msexcel",
+      "application/x-msexcel",
+      "application/x-excel",
+      "application/x-dos_ms_excel",
+      "application/xls",
+      "application/x-xls",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ].includes(type)
+  ) {
+    return "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg/1101px-Microsoft_Office_Excel_%282019%E2%80%93present%29.svg.png";
+  } else if (
+    [
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ].includes(type)
+  ) {
+    return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkDY7I2XNodvnhc7le1_N4Z43p0iAufJtZlw&s";
+  } else {
+    return "https://static.vecteezy.com/system/resources/previews/024/090/509/non_2x/folder-file-documents-free-png.png";
+  }
+};
+
+export const collectFileSize = (files) => {
+  let fileText = filesize(
+    _.sum(
+      files.map((res) => {
+        return res.size;
+      })
+    ),
+    { standard: "jedec" }
+  );
+  return {
+    textAlise: fileText,
+    actualSize: _.sum(
+      files.map((res) => {
+        return res.size;
+      })
+    ),
+  };
 };

@@ -13,7 +13,7 @@
     @apply lg:w-[400px] h-[40px] placeholder:!text-gray-500 font-Poppins hover:border-gray-500 focus:border-gray-500;
   }
   .primary_btn {
-    @apply antd_input bg-primary text-white border-none hover:!bg-primary hover:!text-white;
+    @apply antd_input !w-full bg-primary text-white border-none hover:!bg-primary hover:!text-white;
   }
 }
 

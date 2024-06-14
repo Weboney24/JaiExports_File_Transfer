@@ -21,14 +21,12 @@ const {
   filterByDate,
   getLinkStatus,
   updateDownloadCount,
-  deleteLinkParser,
 } = require("../controller/dashboard.controller");
 const { sendMail } = require("../controller/user.controller");
 router.use("/dashboard", verifyToken, dashboard_routes);
 
 router.get("/get_shared_file/:id", getPerticularFile);
 router.get("/get_link_status/:id", getLinkStatus);
-router.get("/delete_link_after_expire", deleteLinkParser);
 router.post("/verify_file_password", verifyFilePassword);
 router.post("/filter_by_date", filterByDate);
 router.put("/update_download_count", updateDownloadCount);

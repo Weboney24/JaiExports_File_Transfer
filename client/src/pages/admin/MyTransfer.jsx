@@ -29,7 +29,9 @@ import { FaCopy } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { BsQrCodeScan } from "react-icons/bs";
 import { ImQrcode } from "react-icons/im";
-import CopyLink from "../../component/CopyLink";
+import { BiPhoneOff } from "react-icons/bi";
+import { PiDeviceMobileDuotone } from "react-icons/pi";
+import { MdOutlineDocumentScanner } from "react-icons/md";
 
 const MyTransfer = () => {
   const [data, setData] = useState([]);
@@ -92,7 +94,7 @@ const MyTransfer = () => {
 
   useEffect(() => {
     setShift(!shift);
-  }, [moment()]);
+  }, []);
 
   const columns = [
     {
@@ -106,7 +108,7 @@ const MyTransfer = () => {
     },
 
     {
-      title: "Scan to share",
+      title: "Scan",
       dataIndex: "transfer_link",
       align: "center",
       render: (data) => {
@@ -115,12 +117,9 @@ const MyTransfer = () => {
             onClick={() => {
               setLinks(client_url + data);
             }}
-            className="w-[100px] center_div"
+            className="center_div"
           >
-            <QRCode
-              value={`${client_url}${data}`}
-              className="!w-[50px] !h-[50px] cursor-pointer animate-pulse"
-            />
+            <MdOutlineDocumentScanner className="cursor-pointer" />
           </div>
         );
       },
@@ -146,7 +145,12 @@ const MyTransfer = () => {
             href={`${client_url}${data}`}
             target="_blank"
           >
-            <div className="pt-4">{CopyLink(`${client_url}${data}`)}</div>
+            <FaCopy
+              onClick={() => {
+                copyHelper(`${client_url}${data}`);
+              }}
+              className={`text-primary hover:text-secondary cursor-pointer`}
+            />
             <Link target="_blank" to={`${client_url}${data}`}>
               <IconHelper.clickLink className={`text-blue-400 !text-[10px]`} />
             </Link>
@@ -156,10 +160,14 @@ const MyTransfer = () => {
     },
 
     {
-      title: "Name",
+      title: "Transfer Name",
       dataIndex: "transfer_name",
       render: (data) => {
-        return <h1 className="capitalize w-[100px] line-clamp-1">{data}</h1>;
+        return (
+          <Tooltip title={data}>
+            <div className="capitalize w-[100px] line-clamp-1">{data}</div>
+          </Tooltip>
+        );
       },
     },
     {
@@ -205,30 +213,33 @@ const MyTransfer = () => {
         );
       },
     },
+    // {
+    //   title: "Transfer / Expired Date ",
+    //   dataIndex: "createdAt",
+    //   render: (data) => {
+    //     return (
+    //       <div className="min-w-[200px]">
+    //         {moment(data).format("DD-MMMM-YYYY")}
+    //       </div>
+    //     );
+    //   },
+    // },
     {
-      title: "Transfer",
-      dataIndex: "createdAt",
-      render: (data) => {
-        return (
-          <div className="min-w-[200px]">{moment(data).format("llll")}</div>
-        );
-      },
-    },
-    {
-      title: <div>Expired In</div>,
+      title: <div>Transfer / Expired Date </div>,
       dataIndex: "expire_date",
-      render: (data) => {
+      render: (data, all) => {
         let expDate = moment.duration(moment(data).diff(new Date()));
         return (
           <div
-            className={`text-sm font-semibold !w-[100px] ${
-              expDate.seconds() < 0 ? "text-secondary" : "text-primary"
+            className={`text-sm flex gap-x-2 !min-w-[100px] ${
+              expDate.seconds() < 0 ? "text-secondary" : ""
             } `}
           >
+            <div>{moment(all.createdAt).format("DD-MMMM-YYYY")}</div> / &nbsp;
             {expDate.seconds() < 0 ? (
               <span>Expired</span>
             ) : (
-              `${expDate.days()}:${expDate.hours()}:${expDate.minutes()}:${expDate.seconds()}`
+              `${moment(data).format("DD-MMMM-YYYY")}`
             )}
           </div>
         );
@@ -236,8 +247,9 @@ const MyTransfer = () => {
     },
     {
       title: "Actions",
-      align: "center",
+      // align: "center",
       dataIndex: "createdAt",
+
       render: (data, datas) => {
         let expDate = moment.duration(
           moment(datas.expire_date).diff(new Date())
@@ -378,7 +390,8 @@ const MyTransfer = () => {
         columns={columns}
         dataSource={data}
         scroll={{ x: 200 }}
-        pagination={{ pageSize: 6, position: ["bottomCenter"] }}
+        size="small"
+        pagination={{ pageSize: 10, position: ["bottomCenter"] }}
       />
 
       <Modal
@@ -402,8 +415,12 @@ const MyTransfer = () => {
 
             <div className="flex items-center gap-x-4">
               <h1>Transfer Link : </h1>
-
-              <div className="pt-4">{CopyLink(`${client_url}${newLink}`)}</div>
+              <FaCopy
+                onClick={() => {
+                  copyHelper(`${client_url}${newLink}`);
+                }}
+                className={`text-primary hover:text-secondary cursor-pointer`}
+              />
               <Link target="_blank" to={`${client_url}${newLink}`}>
                 <IconHelper.clickLink
                   className={`text-blue-400 !text-[10px]`}

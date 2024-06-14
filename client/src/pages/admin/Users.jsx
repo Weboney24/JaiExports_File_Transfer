@@ -39,7 +39,7 @@ const Users = () => {
     try {
       setLoading(true);
       const result = await getAllUser();
-      setAllUser(_.get(result, "data.data", []));
+      setAllUser(_.sortBy(_.get(result, "data.data", []), "name"));
     } catch (err) {
       console.log("error fetching data", err);
     } finally {
@@ -144,6 +144,9 @@ const Users = () => {
       title: "Name",
       key: "name",
       dataIndex: "name",
+      render: (data) => {
+        return <h1 className="capitalize">{data}</h1>;
+      },
     },
     {
       title: "Email",
@@ -154,11 +157,12 @@ const Users = () => {
       title: "Role",
       key: "role",
       dataIndex: "role",
+      align: "center",
       render: (values, all_values) => {
         return (
           <div className="flex items-center justify-start gap-x-2">
             <Tag
-              className={`center_div h-[30px] border-none text-white font-bold min-w-[100px] uppercase  ${
+              className={`center_div  border-none min-w-[100px] text-white font-bold  uppercase  ${
                 values === "sub admin"
                   ? "bg-blue-500"
                   : values === "admin"
@@ -166,7 +170,7 @@ const Users = () => {
                   : "bg-primary"
               }`}
             >
-              <div>{values}</div>
+              <div className="!text-[10px]">{values}</div>
             </Tag>
             {_.get(userData, "userSlice.role", "") === "admin" &&
               values != "admin" && (
@@ -174,7 +178,7 @@ const Users = () => {
                   onClick={() => {
                     handleRoleChangeRequest(all_values);
                   }}
-                  className={`bg-lime-500 rounded-lg size-[30px] p-2 cursor-pointer text-white `}
+                  className={`bg-lime-500 rounded-lg size-[20px] p-1 cursor-pointer text-white `}
                 />
               )}
           </div>
@@ -208,32 +212,15 @@ const Users = () => {
       key: "action",
       align: "center",
 
-      width: 300,
       render: (data) => {
         return (
-          <div className={` flex items-center w-full justify-center gap-x-10`}>
-            {"admin" === data.role ? (
-              _.get(userData, "userSlice.role", "") === "admin" &&  <span
+          <div className="flex items-center w-full justify-center gap-x-5">
+            <IconHelper.editIcon
+              className="cursor-pointer hover:text-primary hover:scale-110"
               onClick={() => {
                 handleEdit(data);
               }}
-              className={`
-         center_div gap-x-2 border px-2 rounded-lg py-1 bg-primary !text-white cursor-pointer `}
-            >
-              <IconHelper.editUserIcon /> update
-            </span>
-            ) : (
-              <span
-                onClick={() => {
-                  handleEdit(data);
-                }}
-                className={`
-           center_div gap-x-2 border px-2 rounded-lg py-1 bg-primary !text-white cursor-pointer `}
-              >
-                <IconHelper.editUserIcon /> update
-              </span>
-            )}
-
+            />
             <Popconfirm
               onConfirm={() => {
                 handleDelete(data._id);
@@ -242,12 +229,8 @@ const Users = () => {
               cancelText="No"
               title="Are you sure want to delete this user"
               placement="left"
-              className={`${"admin" === data.role ? "invisible" : "visible"}`}
             >
-              <span className="center_div gap-x-2 border px-2 rounded-lg py-1 bg-secondary !text-white cursor-pointer">
-                <IconHelper.deleteUserIcon />
-                delete
-              </span>
+              <IconHelper.deleteIcon2 className="cursor-pointer hover:text-secondary hover:scale-110" />
             </Popconfirm>
           </div>
         );
@@ -282,6 +265,7 @@ const Users = () => {
         columns={columns}
         dataSource={user}
         scroll={{ x: 100 }}
+        size="small"
         pagination={{ pageSize: 6, position: ["bottomCenter"] }}
       />
       <Modal

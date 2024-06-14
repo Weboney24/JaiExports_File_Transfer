@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import _ from "lodash";
 import {
   client_url,
-  deleteLinkParser,
   getLinkStatus,
   getPerticularFile,
   server_url,
@@ -73,28 +72,19 @@ const Files = () => {
   };
 
   useEffect(() => {
-    try {
-      deleteLinkParser();
-    } catch (err) {}
-  }, [location.pathname]);
-
-  useEffect(() => {
-    try {
-      if (linkStatus) {
-        if (
-          _.get(navigate, "pathname", "").split("/")[2].slice(-6) ===
-            "b3P3ts" &&
-          !verified
-        ) {
-          setOpen(true);
-          setVerified(false);
-        } else {
-          fetchData();
-        }
+    if (linkStatus) {
+      if (
+        _.get(navigate, "pathname", "").split("/")[2].slice(-6) === "b3P3ts" &&
+        !verified
+      ) {
+        setOpen(true);
+        setVerified(false);
       } else {
-        checkLinkStatus();
+        fetchData();
       }
-    } catch (err) {}
+    } else {
+      checkLinkStatus();
+    }
   }, [_.get(navigate, "pathname", "").split("/")[2], linkStatus]);
 
   const handlePassword = async (value) => {
@@ -120,18 +110,9 @@ const Files = () => {
       await updateDownloadCount({
         id: _.get(datas, "[0]._id", []),
         user_id: _.get(datas, "[0].user_id", []),
-        link: `${server_url}/${_.get(values, "filename", [])}`,
+        link: `${client_url}${_.get(datas, "[0].transfer_link", [])}`,
       });
-
-      var link = document.createElement("a");
-      link.href = `${server_url}/${_.get(values, "filename", [])}`;
-
-      link.download = _.get(values, "originalname", []);
-
-      document.body.appendChild(link);
-      link.click();
-
-      document.body.removeChild(link);
+      window.open(values.location);
       setLinkStatus(true);
     } catch (err) {
       setLinkStatus(true);
@@ -146,6 +127,7 @@ const Files = () => {
   }, [moment()]);
 
   const getIcon = (name) => {
+    console.log(name.split(".")[name.split(".").length - 1])
     try {
       switch (name.split(".")[name.split(".").length - 1]) {
         case "pdf":
@@ -175,26 +157,23 @@ const Files = () => {
       } min-h-screen overflow-hidden center_div bg-gradient-to- from-[#f7f7f7] to-[rgba(255,250,180,0.03)] bg-no-repeat bg-cover bg-center text-primary items-start font-Poppins lining-nums`}
     >
       {!linkStatus ? (
-        <div className="w-screen h-screen center_div">
-          <img
-            src={Logo}
-            className="w-[100px] h-[80px] animate-bounce"
-            alt=""
-          />
-        </div>
+        <img
+          src="https://cdn.dribbble.com/users/1186261/screenshots/3718681/_______.gif"
+          alt=""
+        />
       ) : (
         <div className=" flex w-[1366px] z-50 flex-col lg:mt-[15vh] mt-[6vh] justify-center  items-center px-4  lg:px-10 gap-y-1">
           <div className="flex  flex-col  items-center gap-y-6 justify-center w-full z-50 ">
             <img src={Logo} alt="" className="lg:w-[5%] w-[20%]  rounded-lg" />
-            <h1 className="text-secondary tracking-wider text-2xl font-Poppins">
+            <h1 className="text-secondary tracking-wider font-Poppins">
               Jai Export Enterprises
             </h1>
           </div>
           <p className="line-clamp-1 text-gray-400 pt-2">
-            Transfer File Name : {_.get(datas, "[0].transfer_name", [])}
+            Transfer Name : {_.get(datas, "[0].transfer_name", [])}
           </p>
           <div className={`font-semibold flex flex-col items-star  pt-4`}>
-            {dates?.seconds() < 0 ? (
+            {dates.seconds() < 0 ? (
               "Expired"
             ) : (
               <div className="flex items-center gap-x-2">
@@ -202,26 +181,26 @@ const Files = () => {
                   {
                     name: "Days",
                     value:
-                      dates.days() > 9 ? dates?.days() : `0 ${dates?.days()}`,
+                      dates.days() > 9 ? dates.days() : `0 ${dates.days()}`,
                   },
                   {
                     name: "Hours",
-                    value: dates?.hours(),
+                    value: dates.hours(),
                   },
                   {
                     name: "Minutes",
-                    value: dates?.minutes(),
+                    value: dates.minutes(),
                   },
                   {
                     name: "Seconds",
-                    value: dates?.seconds(),
+                    value: dates.seconds(),
                   },
                 ].map((res, index) => {
                   return (
                     <div className="">
                       <span
                         className={` ${
-                          dates?.seconds() < 0
+                          dates.seconds() < 0
                             ? "text-red-500 bg-white"
                             : "bg-primary text-white"
                         } px-2  min-w-[50px] center_div rounded text-white py-2`}
@@ -243,15 +222,15 @@ const Files = () => {
                   key={index}
                 >
                   <div className="pt-4 text-secondary">
-                    {getIcon(res.originalname) || (
+                    {getIcon(res.name) || (
                       <IconHelper.fileIcon className="!text-secondary" />
                     )}
                   </div>
                   <abbr
-                    title={res.originalname}
+                    title={res.name}
                     className="!line-clamp-1 no-underline w-[90%] "
                   >
-                    {res.originalname}
+                    {res.name}
                   </abbr>
                   <Tag className="!text-[10px] bg-white !border-transparent flex items-center gap-x-2">
                     <MdSdStorage />

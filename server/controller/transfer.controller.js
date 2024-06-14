@@ -9,9 +9,28 @@ const moment = require("moment");
 
 const makeTransfer = async (req, res) => {
   try {
-    const result = await _.get(req, "files", []).map((data, index) => {
-      return data;
+    const result = await _.get(req, "files", []).map(async (res) => {
+      console.log(res);
+      const params = {
+        Bucket: process.env.AWS_BUCKET,
+        Key: `${res.originalname.split(".")[0]}${Date.now()}${path.extname(
+          res.originalname
+        )}`,
+        Body: require("fs").createReadStream(res.path),
+        ACL: "public-read",
+      };
+      await s3Client.send(new PutObjectCommand(params));
+      const location = `https://${params.Bucket}.s3.amazonaws.com/${params.Key}`;
+      const key = params.Key;
+      fs.unlinkSync(res.path);
+      return {
+        key: key,
+        location: location,
+        name: res.originalname,
+        size: res.size,
+      };
     });
+    const media = await Promise.all(result);
 
     const data = JSON.parse(req.body.data);
 
@@ -23,7 +42,7 @@ const makeTransfer = async (req, res) => {
       custom_expire_date: data.custom_expire_date,
       expire_date: data.expire_date,
       user_id: req.userData.id,
-      files: result,
+      files: media,
     };
     await TransferSchema.create(formData);
     return res.status(200).send({ data: formData.transfer_link });

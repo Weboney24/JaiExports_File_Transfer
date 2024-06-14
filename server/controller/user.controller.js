@@ -55,11 +55,7 @@ const deleteUser = async (req, res) => {
 
 const getAllUser = async (req, res) => {
   try {
-    const result = await User.find({}, { password: 0, password_alise: 0 }).sort(
-      {
-        createdAt: -1,
-      }
-    );
+    const result = await User.find({}, { password: 0, password_alise: 0 });
     return res.status(200).send({ data: result });
   } catch (err) {
     return res.status(500).send({ message: "err" });

@@ -43,7 +43,11 @@ const Profile = () => {
           />
         </Form.Item>
         <Form.Item>
-          <Button loading={loading} htmlType="submit" className="primary_btn">
+          <Button
+            loading={loading}
+            htmlType="submit"
+            className="primary_btn !w-fit"
+          >
             Change Password
           </Button>
         </Form.Item>

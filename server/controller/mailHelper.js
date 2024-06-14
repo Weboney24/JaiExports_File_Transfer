@@ -8,8 +8,8 @@ const sendMailWithHelper = async (email, data, type) => {
     let config = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "jaihandloom@gmail.com",
-        pass: "rqrx xsgv lqmf uthn",
+        user: "weboneycbe@gmail.com",
+        pass: "ldkd dtxp cmiz ysmg",
       },
       port: 587,
       secure: false,
@@ -43,7 +43,7 @@ const sendMailWithHelper = async (email, data, type) => {
     };
 
     if (type === "download count") {
-      mailTemplate.cc = "info@jai-india.com";
+      // mailTemplate.cc = "info@jai-india.com";
       mailTemplate.subject = "Notification for Downloading File Transfer Links";
     }
 
