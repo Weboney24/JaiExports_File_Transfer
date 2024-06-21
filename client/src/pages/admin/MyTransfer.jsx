@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { copyHelper, IconHelper } from "../../helper/Icon_helper";
 import {
   Divider,
@@ -21,17 +21,12 @@ import {
   removeTransferPassword,
   updateTransferPassword,
 } from "../../helper/api_helper";
-import _, { difference } from "lodash";
+import _ from "lodash";
 import { filesize } from "filesize";
 import moment from "moment";
-import { useSelector } from "react-redux";
-import DefaultHeader from "../DefaultHeader";
 import { FaCopy } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import { BsQrCodeScan } from "react-icons/bs";
 import { ImQrcode } from "react-icons/im";
-import { BiPhoneOff } from "react-icons/bi";
-import { PiDeviceMobileDuotone } from "react-icons/pi";
 import { MdOutlineDocumentScanner } from "react-icons/md";
 
 const MyTransfer = () => {
@@ -42,8 +37,6 @@ const MyTransfer = () => {
 
   const [newLink, setNewLink] = useState("");
   const [shift, setShift] = useState(false);
-
-  const userData = useSelector((data) => data.userSlice);
 
   const [links, setLinks] = useState(false);
 
@@ -413,12 +406,14 @@ const MyTransfer = () => {
 
             <div className="flex items-center gap-x-4">
               <h1>Transfer Link : </h1>
-              <FaCopy
-                onClick={() => {
-                  copyHelper(`${client_url}${newLink}`);
+
+              <Typography.Paragraph
+                copyable={{
+                  text: `${client_url}${newLink}`,
                 }}
-                className={`text-primary hover:text-secondary cursor-pointer`}
-              />
+                className="pt-4"
+              ></Typography.Paragraph>
+
               <Link target="_blank" to={`${client_url}${newLink}`}>
                 <IconHelper.clickLink
                   className={`text-blue-400 !text-[10px]`}

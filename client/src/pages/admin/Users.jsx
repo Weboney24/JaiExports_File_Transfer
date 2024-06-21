@@ -162,7 +162,7 @@ const Users = () => {
         return (
           <div className="flex items-center justify-start gap-x-2">
             <Tag
-              className={`center_div  border-none min-w-[100px] text-white font-bold  uppercase  ${
+              className={`center_div  border-none min-w-[100px] py-2 text-white font-bold  uppercase  ${
                 values === "sub admin"
                   ? "bg-blue-500"
                   : values === "admin"

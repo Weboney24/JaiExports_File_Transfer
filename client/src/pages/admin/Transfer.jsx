@@ -13,6 +13,7 @@ import {
   DatePicker,
   QRCode,
   notification,
+  Typography,
 } from "antd";
 import {
   collectFileSize,
@@ -377,12 +378,14 @@ const Transfer = () => {
           <div className="flex flex-col items-center gap-y-4 pt-10">
             <div className="text-sm   gap-x-4 items-center flex justify-start w-full px-6 ">
               <span>Transfer Link :</span>
-              <FaCopy
-                onClick={() => {
-                  copyHelper(`${client_url}${_.get(modalData, "data", "")}`);
+
+              <Typography.Paragraph
+                copyable={{
+                  text: `${client_url}${_.get(modalData, "data", "")}`,
                 }}
-                className={`text-primary hover:text-secondary cursor-pointer`}
-              />
+                className="pt-4"
+              ></Typography.Paragraph>
+
               <Link
                 target="_blank"
                 to={`${client_url}${_.get(modalData, "data", "")}`}
