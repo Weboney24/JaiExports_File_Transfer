@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Divider, Modal, QRCode, Table, Tooltip } from "antd";
+import { Divider, Modal, QRCode, Table, Tooltip, Typography } from "antd";
 
 import _ from "lodash";
 import { filesize } from "filesize";
@@ -33,7 +33,7 @@ const AllTransfers = () => {
 
   useEffect(() => {
     setShift(!shift);
-  }, [moment()]);
+  }, []);
 
   const columns = [
     {
@@ -99,19 +99,16 @@ const AllTransfers = () => {
       dataIndex: "transfer_link",
       render: (data) => {
         return (
-          <div
-            className="text-sm line-clamp-2  gap-x-4 items-center flex justify-center w-[100px] "
-            href={`${client_url}${data}`}
-            target="_blank"
-          >
-            <FaCopy
-              onClick={() => {
-                copyHelper(`${client_url}${data}`);
+          <div className="text-sm  gap-x-10 items-center flex justify-center  w-[100px] ">
+            <Typography.Paragraph
+              copyable={{
+                text: `${client_url}${data}`,
               }}
-              className={`text-primary hover:text-secondary cursor-pointer`}
-            />
+              className="pt-4"
+            ></Typography.Paragraph>
+
             <Link target="_blank" to={`${client_url}${data}`}>
-              <IconHelper.clickLink className={`text-blue-400 !text-[10px]`} />
+              <IconHelper.clickLink className={`text-blue-400 !text-[14px]`} />
             </Link>
           </div>
         );
@@ -208,7 +205,7 @@ const AllTransfers = () => {
         scroll={{ x: 100 }}
         columns={columns}
         dataSource={data}
-        pagination={{ pageSize: 6, position: ["bottomCenter"] }}
+        pagination={{ pageSize: 20, position: ["bottomCenter"] }}
         size="small"
       />
       <Modal

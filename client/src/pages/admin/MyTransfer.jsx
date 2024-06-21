@@ -12,6 +12,7 @@ import {
   Button,
   Tooltip,
   QRCode,
+  Typography,
 } from "antd";
 import {
   client_url,
@@ -140,19 +141,16 @@ const MyTransfer = () => {
       dataIndex: "transfer_link",
       render: (data) => {
         return (
-          <div
-            className="text-sm line-clamp-2  gap-x-4 items-center flex justify-center w-[100px] "
-            href={`${client_url}${data}`}
-            target="_blank"
-          >
-            <FaCopy
-              onClick={() => {
-                copyHelper(`${client_url}${data}`);
+          <div className="text-sm  gap-x-10 items-center flex justify-center  w-[100px] ">
+            <Typography.Paragraph
+              copyable={{
+                text: `${client_url}${data}`,
               }}
-              className={`text-primary hover:text-secondary cursor-pointer`}
-            />
+              className="pt-4"
+            ></Typography.Paragraph>
+
             <Link target="_blank" to={`${client_url}${data}`}>
-              <IconHelper.clickLink className={`text-blue-400 !text-[10px]`} />
+              <IconHelper.clickLink className={`text-blue-400 !text-[14px]`} />
             </Link>
           </div>
         );
@@ -391,7 +389,7 @@ const MyTransfer = () => {
         dataSource={data}
         scroll={{ x: 200 }}
         size="small"
-        pagination={{ pageSize: 10, position: ["bottomCenter"] }}
+        pagination={{ pageSize: 20, position: ["bottomCenter"] }}
       />
 
       <Modal

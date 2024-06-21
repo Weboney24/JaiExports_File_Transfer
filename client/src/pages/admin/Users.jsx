@@ -266,7 +266,7 @@ const Users = () => {
         dataSource={user}
         scroll={{ x: 100 }}
         size="small"
-        pagination={{ pageSize: 6, position: ["bottomCenter"] }}
+        pagination={{ pageSize: 20, position: ["bottomCenter"] }}
       />
       <Modal
         open={open || roleChange}

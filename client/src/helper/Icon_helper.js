@@ -110,10 +110,7 @@ export const navbar = [
 
 export const copyHelper = (value) => {
   console.log(value);
-  if (!window.navigator || !window.navigator.clipboard) {
-    message.error("Clipboard functionality not available.");
-    return;
-  }
+
   try {
     window?.navigator?.clipboard?.writeText(value);
     message.success("Link copied");
