@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Divider,
   Upload,
@@ -9,32 +9,33 @@ import {
   Input,
   Button,
   Modal,
-  Spin,
   DatePicker,
   QRCode,
-  notification,
   Typography,
+  Select,
+  notification,
 } from "antd";
 import {
   collectFileSize,
-  copyHelper,
   IconHelper,
+  UrlHelper,
 } from "../../helper/Icon_helper";
 import { filesize } from "filesize";
 import _ from "lodash";
 import { client_url, uploadFiles } from "../../helper/api_helper";
 import { v4 as uuidv4 } from "uuid";
 import { Link, useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
 import moment from "moment";
-import DefaultHeader from "../DefaultHeader";
-import { TbArrowsRandom } from "react-icons/tb";
-import { FaCopy } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import Extra from "./Makeextra/Extra";
 
 const Transfer = () => {
   const [files, setFiles] = useState([]);
   const [dummy, setDummy] = useState(false);
+
+  const userData = useSelector((data) => data);
+
+  console.log(userData);
 
   const navigate = useNavigate();
 
@@ -104,6 +105,8 @@ const Transfer = () => {
   };
 
   const handleFinish = async (values) => {
+    console.log(values);
+
     try {
       if (collectFileSize(files)?.actualSize > 2000000000) {
         return notification.error({
@@ -111,15 +114,14 @@ const Transfer = () => {
             "File size limit exceeded; maximum allowed is 2GB. Please remove or alter files to reduce the size.",
         });
       }
-      if (aliseName.status === "custom") {
-        values.transfer_link = values.transfer_password
-          ? values.transfer_link.concat(Date.now()).concat("b3P3ts")
-          : values.transfer_link.concat(Date.now());
-      } else {
-        values.transfer_link = values.transfer_password
-          ? uuidv4().slice(0, 7).concat(values.transfer_link).concat("b3P3ts")
-          : uuidv4().slice(0, 7).concat(values.transfer_link);
-      }
+
+      values.trackgmail = values.recipient_email?.map((res) => {
+        return {
+          link: UrlHelper(),
+          gmail: res,
+        };
+      });
+      values.transfer_link = UrlHelper();
 
       if (values.custom_expire_date) {
         values.expire_date = values.custom_expire_date;
@@ -138,6 +140,7 @@ const Transfer = () => {
           total: data.total,
           loaded: data.loaded,
         }));
+
         if (data.progress === 1) {
           setOpen(false);
           form.resetFields();
@@ -199,35 +202,12 @@ const Transfer = () => {
       </h1>
       <Divider />
 
-      <div className="w-full flex">
-        <div className="center_div items-start  w-[80%]">
+      <div className="w-full flex gap-x-2">
+        <div className="center_div items-start w-[80%]">
           {!_.isEmpty(files) ? (
-            <div className="flex items-start gap-y-4 justify-between w-full lg:flex-row flex-col-reverse gap-x-10 lg:px-4">
+            <div className="flex items-start gap-y-4  justify-between w-full lg:flex-row flex-col-reverse gap-x-10 lg:px-4">
               {/* form */}
-              <div className="w-full  p-5 rounded-lg shadow-inner bg-white flex flex-col gap-y-4">
-                <div>
-                  <h1 className="lining-nums">
-                    Limit {collectFileSize(files)?.textAlise}&nbsp;/ 2GB
-                  </h1>
-                  <Progress
-                    strokeColor={
-                      collectFileSize(files)?.actualSize > 2000000000
-                        ? "red"
-                        : "#d97706"
-                    }
-                    percent={
-                      !_.isEmpty(files)
-                        ? collectFileSize(files)?.actualSize >= 2000000000
-                          ? 100
-                          : (
-                              (collectFileSize(files)?.actualSize /
-                                2000000000) *
-                              100
-                            ).toFixed(1)
-                        : ""
-                    }
-                  />
-                </div>
+              <div className="w-full  p-5 rounded-lg  bg-white flex flex-col gap-y-6">
                 <Form
                   layout="vertical"
                   form={form}
@@ -270,56 +250,35 @@ const Transfer = () => {
                       placeholder="Enter Expiry Date"
                       className="antd_input  !lining-nums"
                       use12Hours
-                      showTime
                       disabledDate={disabledDate}
-                      format={"DD:MM:YYYY HH:mm A"}
+                      format={"DD:MM:YYYY"}
                     />
                   </Form.Item>
                   <Form.Item
-                    label={
-                      <div>
-                        Link &nbsp;&nbsp;
-                        <span className="text-[12px] lining-nums text-blue-500">
-                          {client_url}
-                          {aliseName.status === "auto"
-                            ? aliseName.name
-                            : aliseName.name &&
-                              aliseName.name.concat(Date.now())}
-                        </span>
-                      </div>
-                    }
-                    name="transfer_link"
+                    label="Select Recipient Email"
+                    name="recipient_email"
                     rules={[
                       {
                         required: true,
-                        message: "Please enter a transfer link",
+                        message: "Please add/select a recipient email",
                       },
                     ]}
-                    className="!w-full"
                   >
-                    <div className="flex items-center justify-between !w-full ">
-                      <Input
-                        addonBefore={client_url}
-                        value={aliseName.name}
-                        onChange={(value) => {
-                          handleRandomGenerate(value.target.value);
-                        }}
-                        placeholder="Enter Transfer link name"
-                        className="antd_input !w-[80%] rounded-r-none "
-                      />
-                      <div
-                        onClick={() => {
-                          handleRandomGenerate(10, "auto");
-                        }}
-                        className="lg:w-[20%] w-[30px] !text-[10px]  center_div h-[40px] font-Poppins  bg-secondary text-white rounded-r cursor-pointer"
-                      >
-                        <span className="lg:block hidden"> Auto Generate</span>
-                        <TbArrowsRandom className="!text-xl lg:hidden block" />
-                      </div>
-                    </div>
+                    <Select
+                      virtual={false}
+                      mode="tags"
+                      className="antd_input  !min-h-[10px] !w-[640px] focus:!border-none hover:border-none"
+                      tokenSeparators={[","]}
+                      placeholder="Select Recipient Email"
+                    ></Select>
                   </Form.Item>
-                  <Form.Item>
-                    <Button block className="primary_btn" htmlType="submit">
+
+                  <Form.Item className="!w-full">
+                    <Button
+                      block
+                      className="primary_btn !w-[100px]"
+                      htmlType="submit"
+                    >
                       Upload
                     </Button>
                   </Form.Item>
@@ -337,14 +296,31 @@ const Transfer = () => {
             />
           )}
         </div>
-        <div className="flex items-start  justify-start flex-col w-[20%] gap-y-2">
+        <div className="flex items-start  justify-start flex-col shadow-2xl bg-white rounded-2xl py-2 p-4 w-[30%] gap-y-2">
+          <div className="!w-full">
+            <Progress
+              strokeColor={
+                collectFileSize(files)?.actualSize > 2000000000
+                  ? "red"
+                  : "#d97706"
+              }
+              percent={
+                !_.isEmpty(files)
+                  ? collectFileSize(files)?.actualSize >= 2000000000
+                    ? 100
+                    : (
+                        (collectFileSize(files)?.actualSize / 2000000000) *
+                        100
+                      ).toFixed(1)
+                  : ""
+              }
+            />
+            <h1 className="lining-nums text-sm py-2">
+              Limit {collectFileSize(files)?.textAlise}&nbsp;/ 2GB
+            </h1>
+          </div>
           <div className={` bg-white  shadow-inner w-[100%]  h-[inherit]`}>
-            <Dragger
-              {...props}
-              showUploadList={false}
-              maxCount={5}
-              className="!bg-white"
-            >
+            <Dragger {...props} showUploadList={false} className="!bg-white">
               <div className={`w-full !h-[100px] center_div flex-col gap-y-4`}>
                 <IconHelper.uploadIcon className="!text-2xl !text-gray-500" />
                 <p className="text-sm font-Poppins font-normal leading-relaxed text-gray-500 text-center">

@@ -11,6 +11,7 @@ import DefaultHeader from "./DefaultHeader";
 import { FaCopy } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { MdOutlineDocumentScanner } from "react-icons/md";
+import { LuMaximize } from "react-icons/lu";
 
 const AllTransfers = () => {
   const [data, setData] = useState([]);
@@ -39,15 +40,16 @@ const AllTransfers = () => {
     {
       title: "S.NO",
       dataIndex: "_id",
-      width: 100,
+      width: 50,
       align: "center",
       render: (data, alldata, index) => {
-        return <span className="font-bold">{index + 1}</span>;
+        return <span className="font-bold !text-[12px]">{index + 1}</span>;
       },
     },
     {
       title: "User",
       dataIndex: "user_id",
+      align: "center",
       width: 100,
       render: (data) => {
         return (
@@ -57,7 +59,7 @@ const AllTransfers = () => {
                 _.get(data, "name", "") === "admin"
                   ? "text-secondary"
                   : "text-primary"
-              } font-semibold cursor-pointer !line-clamp-1 flex items-center  gap-x-2`}
+              } font-semibold cursor-pointer !line-clamp-1 !text-start !px-2 !text-[12px]  gap-x-2`}
             >
               {_.get(data, "name", "")}
             </h1>
@@ -69,6 +71,7 @@ const AllTransfers = () => {
     {
       title: "Scan",
       dataIndex: "transfer_link",
+      width: 50,
       align: "center",
       render: (data) => {
         return (
@@ -76,39 +79,42 @@ const AllTransfers = () => {
             onClick={() => {
               setLinks(client_url + data);
             }}
-            className="center_div"
+            className="center_div "
           >
-            <MdOutlineDocumentScanner className="cursor-pointer" />
+            <LuMaximize className="cursor-pointer !text-[10px]" />
           </div>
         );
       },
     },
     {
       title: (
-        <div className="flex items-center justify-center gap-x-2">
-          <IconHelper.downloadIcon /> Count
+        <div className="flex items-center justify-center gap-x-2 !text-[12px]">
+          Count
         </div>
       ),
+      width: 100,
       dataIndex: "count",
       render: (values) => {
-        return <div className=" center_div">{values}</div>;
+        return <div className=" center_div !text-[12px]">{values}</div>;
       },
     },
     {
-      title: "Transfer Link",
+      title: "Link",
       dataIndex: "transfer_link",
+      align: "center",
+      width: 80,
       render: (data) => {
         return (
-          <div className="text-sm  gap-x-10 items-center flex justify-center  w-[100px] ">
+          <div className="text-sm  gap-x-6 items-center flex justify-center ">
             <Typography.Paragraph
               copyable={{
                 text: `${client_url}${data}`,
               }}
+              style={{ fontSize: 10 }}
               className="pt-4"
             ></Typography.Paragraph>
-
             <Link target="_blank" to={`${client_url}${data}`}>
-              <IconHelper.clickLink className={`text-blue-400 !text-[14px]`} />
+              <IconHelper.clickLink className={`text-blue-400 !text-[10px]`} />
             </Link>
           </div>
         );
@@ -116,23 +122,28 @@ const AllTransfers = () => {
     },
     {
       title: "Transfer Name",
+      align: "center",
       dataIndex: "transfer_name",
+      width: 200,
       render: (data) => {
         return (
           <Tooltip title={data}>
-            <div className="capitalize w-[100px] line-clamp-1">{data}</div>
+            <div className="capitalize !text-[12px] line-clamp-1 !text-start !px-2">
+              {data}
+            </div>
           </Tooltip>
         );
       },
     },
-
     {
       title: "Files",
       dataIndex: "files",
+      align: "center",
+      width: 50,
       render: (data) => {
         return (
-          <div className="lining-nums text-primary font-bold">
-            {data?.length} <Divider type="vertical" />
+          <div className="lining-nums text-primary !text-[12px] font-bold">
+            {data?.length}
           </div>
         );
       },
@@ -140,10 +151,11 @@ const AllTransfers = () => {
     {
       title: "Size",
       dataIndex: "files",
-
+      align: "center",
+      width: 100,
       render: (data) => {
         return (
-          <div className="text-green-500 !min-w-[100px] !text-sm">
+          <div className="text-green-500 line-clamp-1 !text-[12px]">
             {filesize(
               _.sum(
                 data?.map((res) => {
@@ -158,12 +170,14 @@ const AllTransfers = () => {
     },
     {
       title: <div>Transfer / Expired Date </div>,
+      width: 200,
+      align: "center",
       dataIndex: "expire_date",
       render: (data, all) => {
         let expDate = moment.duration(moment(data).diff(new Date()));
         return (
           <div
-            className={`text-sm flex gap-x-2 !min-w-[100px] ${
+            className={`flex gap-x-2 !text-[12px] !text-center !px-2 ${
               expDate.seconds() < 0 ? "text-secondary" : ""
             } `}
           >
@@ -180,10 +194,11 @@ const AllTransfers = () => {
 
     {
       title: <div>Password</div>,
+      width: 100,
       dataIndex: "transfer_password",
       align: "center",
       render: (data) => {
-        return <div>{data ? "Yes" : "No"}</div>;
+        return <div className="!text-[12px]">{data ? "Yes" : "No"}</div>;
       },
     },
   ];
@@ -203,6 +218,7 @@ const AllTransfers = () => {
 
       <Table
         scroll={{ x: 100 }}
+        bordered
         columns={columns}
         dataSource={data}
         pagination={{ pageSize: 20, position: ["bottomCenter"] }}

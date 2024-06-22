@@ -60,9 +60,14 @@
 }
 
 .ant-table-thead .ant-table-cell {
-  background-color: var(--third-color) !important;
-  color: white !important;
+  /* background-color: var(--third-color) !important; */
+  color: var(--secondary-color) !important;
   font-family: var(--secondary-font) !important;
+  font-size: 12px !important;
+  border-radius: 0px !important;
+}
+.ant-table-thead {
+  height: 25px !important;
 }
 
 .ant-table-tbody > tr > td {
@@ -96,5 +101,43 @@
 /* drawer */
 :where(.css-dev-only-do-not-override-djtmh8).ant-drawer .ant-drawer-body,
 :where(.css-dev-only-do-not-override-djtmh8).ant-drawer .ant-drawer-body {
+  padding: 0px !important;
+}
+
+/* Table size */
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
+  .ant-table.ant-table-small
+  .ant-table-title,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
+  .ant-table.ant-table-small
+  .ant-table-footer,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
+  .ant-table.ant-table-small
+  .ant-table-cell,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
+  .ant-table.ant-table-small
+  .ant-table-thead
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
+  .ant-table.ant-table-small
+  .ant-table-tbody
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
+  .ant-table.ant-table-small
+  .ant-table-tbody
+  > tr
+  > td,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
+  .ant-table.ant-table-small
+  tfoot
+  > tr
+  > th,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
+  .ant-table.ant-table-small
+  tfoot
+  > tr
+  > td {
   padding: 0px !important;
 }

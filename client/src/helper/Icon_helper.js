@@ -23,6 +23,7 @@ import { CiFileOn } from "react-icons/ci";
 import { FiDownload, FiDownloadCloud } from "react-icons/fi";
 import { RiUserShared2Line } from "react-icons/ri";
 import { MdKey } from "react-icons/md";
+import { v4 as uuidv4 } from "uuid";
 import { MdKeyOff } from "react-icons/md";
 import { FaRegFileAlt } from "react-icons/fa";
 import { TbLogout } from "react-icons/tb";
@@ -56,7 +57,7 @@ export const IconHelper = {
   logout: TbLogout,
   switchIcon: RxSwitch,
   settings: MdOutlineSettings,
-  downloadIcon: FiDownloadCloud,
+  // downloadIcon: FiDownloadCloud,
   pdfIcon: FaRegFilePdf,
   pngIcon: PiFilePngDuotone,
   jpg: PiFileJpgDuotone,
@@ -168,4 +169,10 @@ export const collectFileSize = (files) => {
       })
     ),
   };
+};
+
+export const UrlHelper = () => {
+  return `${Date.now()}${uuidv4()?.split("-")?.join("")}${Date.now()}${uuidv4()
+    ?.split("-")
+    ?.join("")}`;
 };

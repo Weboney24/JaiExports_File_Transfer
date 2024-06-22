@@ -5,6 +5,12 @@ const transferSchema = new Schema(
   {
     transfer_name: String,
     transfer_link: String,
+    trackgmail: [
+      {
+        link: String,
+        gmail: String,
+      },
+    ],
     transfer_password: String,
     custom_expire_date: Date,
     expire_date: {
