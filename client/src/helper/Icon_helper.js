@@ -35,6 +35,7 @@ import { HiOutlinePhoto } from "react-icons/hi2";
 import { message } from "antd";
 import _ from "lodash";
 import { filesize } from "filesize";
+import { client_url } from "./api_helper";
 
 export const IconHelper = {
   dashboard: MdOutlineDashboard,
@@ -123,7 +124,17 @@ export const copyHelper = (value) => {
 
 export const fileTypeHelper = (type) => {
   if (
-    ["image/jpeg", "image/png", "image/gif", "image/webp", ""].includes(type)
+    [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "",
+      "jpeg",
+      "png",
+      "gif",
+      "webp",
+    ].includes(type)
   ) {
     return "https://png.pngtree.com/png-vector/20190508/ourmid/pngtree-gallery-vector-icon-png-image_1028015.jpg";
   } else if (["application/pdf"].includes(type)) {

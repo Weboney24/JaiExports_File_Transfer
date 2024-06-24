@@ -1,7 +1,8 @@
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
-const ejs = require("ejs");
+
+const { CheckTypes } = require("./typesHandler");
 
 const sendMailWithHelper = async (email, data, type) => {
   try {
@@ -15,22 +16,7 @@ const sendMailWithHelper = async (email, data, type) => {
       secure: false,
     });
 
-    let file =
-      type === "download count"
-        ? ejs.render(
-            fs.readFileSync(
-              path.join(__dirname, "../helper/download.ejs"),
-              "utf8"
-            ),
-            data
-          )
-        : ejs.render(
-            fs.readFileSync(
-              path.join(__dirname, "../helper/greetings.ejs"),
-              "utf8"
-            ),
-            data
-          );
+    let file = CheckTypes(type, data);
 
     let mailTemplate = {
       from: {

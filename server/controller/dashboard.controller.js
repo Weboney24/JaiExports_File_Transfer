@@ -62,7 +62,13 @@ const getAllCounts = async (req, res) => {
 const getPerticularFile = async (req, res) => {
   try {
     const { id } = req.params;
-    const files = await Transfer.find({ transfer_link: id });
+    const files = await Transfer.aggregate([
+      {
+        $match: {
+          "trackgmail.link": id,
+        },
+      },
+    ]);
 
     return res.status(200).send({ data: files });
   } catch (err) {
@@ -74,10 +80,14 @@ const verifyFilePassword = async (req, res) => {
   try {
     const { file_url, file_password } = req.body;
 
-    const result = await Transfer.find({
-      transfer_link: file_url,
-      transfer_password: file_password,
-    });
+    const result = await Transfer.aggregate([
+      {
+        $match: {
+          "trackgmail.link": file_url,
+          transfer_password: file_password,
+        },
+      },
+    ]);
 
     if (_.isEmpty(result)) {
       return res.status(500).send({ message: "Invalid password" });
@@ -165,12 +175,18 @@ const filterByDate = async (req, res) => {
 const getLinkStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const data = await Transfer.find({
-      transfer_link: id,
-      expire_date: {
-        $gt: new Date(),
+
+    const data = await Transfer.aggregate([
+      {
+        $match: {
+          "trackgmail.link": id,
+          expire_date: {
+            $gt: new Date(),
+          },
+        },
       },
-    });
+    ]);
+
     if (_.isEmpty(data)) {
       const data = await Transfer.find({
         transfer_link: id,
@@ -187,9 +203,13 @@ const getLinkStatus = async (req, res) => {
         }
       });
 
-      return res.status(200).send({ data: "expired" });
+      return res.status(200).send({ data: [] });
     } else {
-      return res.status(200).send({ data: "not expired" });
+      return res.status(200).send({
+        data: [
+          { password: _.get(data, "[0].transfer_password", "") ? true : false },
+        ],
+      });
     }
   } catch (err) {
     console.log(err);
@@ -204,7 +224,7 @@ const sendMail = async (req, res) => {
       email: result.email,
       password: result.password_alise,
     };
-    await sendMailWithHelper(result.email, mailData);
+    await sendMailWithHelper(result.email, mailData, "register");
     return res.status(200).send({ message: "sended" });
   } catch (err) {
     console.error(err);
@@ -214,16 +234,27 @@ const sendMail = async (req, res) => {
 
 const updateDownloadCount = async (req, res) => {
   try {
-    const { id, user_id, link } = req.body;
+    const { id, user_id, file_url } = req.body;
 
     await Transfer.findByIdAndUpdate({ _id: id }, { $inc: { count: 1 } });
     const finduserEmail = await User.find({ _id: user_id });
+    const fileDetails = await Transfer.find({ _id: req.body.id });
+
+    let fetchGmail = _.get(fileDetails, "[0].trackgmail", []).filter((res) => {
+      return res.link === file_url;
+    });
 
     let mailData = {
-      os: os.platform(),
-      userName: os.userInfo().username,
-      link: link,
-      time: moment().format("LLLL"),
+      senderEmail: _.get(fetchGmail, "[0].gmail", ""),
+      transfername: _.get(fileDetails, "[0].transfer_name", ""),
+      password:
+        _.get(fileDetails, "[0].transfer_password", "") || "No Password",
+      expired_date: moment(_.get(fileDetails, "[0].expire_date", "")).format(
+        "DD/MM/YYYY"
+      ),
+      message:
+        _.get(fileDetails, "[0].transfer_description", "") || "No Message",
+      seperate_link: `${req.body.client_url}`,
     };
 
     await sendMailWithHelper(

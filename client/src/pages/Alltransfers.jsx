@@ -12,12 +12,13 @@ import { FaCopy } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { MdOutlineDocumentScanner } from "react-icons/md";
 import { LuMaximize } from "react-icons/lu";
+import RecipientsTableView from "../component/RecipientsTableView";
 
 const AllTransfers = () => {
   const [data, setData] = useState([]);
   const [shift, setShift] = useState(false);
 
-  const [links, setLinks] = useState(false);
+  const [links, setLinks] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -58,8 +59,8 @@ const AllTransfers = () => {
               className={`capitalize ${
                 _.get(data, "name", "") === "admin"
                   ? "text-secondary"
-                  : "text-primary"
-              } font-semibold cursor-pointer !line-clamp-1 !text-start !px-2 !text-[12px]  gap-x-2`}
+                  : "text-secondary"
+              } font-semibold cursor-pointer text-center !line-clamp-1 !px-2 !text-[12px]  gap-x-2`}
             >
               {_.get(data, "name", "")}
             </h1>
@@ -68,24 +69,17 @@ const AllTransfers = () => {
       },
     },
 
-    {
-      title: "Scan",
-      dataIndex: "transfer_link",
-      width: 50,
-      align: "center",
-      render: (data) => {
-        return (
-          <div
-            onClick={() => {
-              setLinks(client_url + data);
-            }}
-            className="center_div "
-          >
-            <LuMaximize className="cursor-pointer !text-[10px]" />
-          </div>
-        );
-      },
-    },
+    // {
+    //   title: "Scan",
+    //   dataIndex: "transfer_link",
+    //   width: 50,
+    //   align: "center",
+    //   render: (data) => {
+    //     return (
+
+    //     );
+    //   },
+    // },
     {
       title: (
         <div className="flex items-center justify-center gap-x-2 !text-[12px]">
@@ -100,22 +94,31 @@ const AllTransfers = () => {
     },
     {
       title: "Link",
-      dataIndex: "transfer_link",
+      dataIndex: "trackgmail",
       align: "center",
       width: 80,
+      render: (data, allData) => {
+        return (
+          <div
+            onClick={() => {
+              setLinks({ data: data, allData: allData });
+            }}
+            className="center_div "
+          >
+            <LuMaximize className="cursor-pointer !text-[10px]" />
+          </div>
+        );
+      },
+    },
+    {
+      title: "Recipient Count",
+      align: "center",
+      dataIndex: "trackgmail",
+      width: 100,
       render: (data) => {
         return (
-          <div className="text-sm  gap-x-6 items-center flex justify-center ">
-            <Typography.Paragraph
-              copyable={{
-                text: `${client_url}${data}`,
-              }}
-              style={{ fontSize: 10 }}
-              className="pt-4"
-            ></Typography.Paragraph>
-            <Link target="_blank" to={`${client_url}${data}`}>
-              <IconHelper.clickLink className={`text-blue-400 !text-[10px]`} />
-            </Link>
+          <div className="text-primary font-bold line-clamp-1 !text-[12px]">
+            {data?.length}
           </div>
         );
       },
@@ -128,7 +131,7 @@ const AllTransfers = () => {
       render: (data) => {
         return (
           <Tooltip title={data}>
-            <div className="capitalize !text-[12px] line-clamp-1 !text-start !px-2">
+            <div className="capitalize !text-[12px] line-clamp-1 !text-center !px-2">
               {data}
             </div>
           </Tooltip>
@@ -154,6 +157,7 @@ const AllTransfers = () => {
       align: "center",
       width: 100,
       render: (data) => {
+        console.log(data, "fileSize");
         return (
           <div className="text-green-500 line-clamp-1 !text-[12px]">
             {filesize(
@@ -161,7 +165,7 @@ const AllTransfers = () => {
                 data?.map((res) => {
                   return res.size;
                 })
-              ).toFixed(1),
+              )?.toFixed(1),
               { standard: "jedec" }
             )}
           </div>
@@ -177,7 +181,7 @@ const AllTransfers = () => {
         let expDate = moment.duration(moment(data).diff(new Date()));
         return (
           <div
-            className={`flex gap-x-2 !text-[12px] !text-center !px-2 ${
+            className={`flex gap-x-2 !text-[12px] !justify-center !text-center !px-2 ${
               expDate.seconds() < 0 ? "text-secondary" : ""
             } `}
           >
@@ -215,7 +219,7 @@ const AllTransfers = () => {
         </div>
       </div>
       <Divider />
-
+      {console.log(links.allData)}
       <Table
         scroll={{ x: 100 }}
         bordered
@@ -225,15 +229,16 @@ const AllTransfers = () => {
         size="small"
       />
       <Modal
-        open={links}
+        open={!_.isEmpty(links)}
         footer={false}
         closable={false}
         onCancel={() => {
-          setLinks(false);
+          setLinks([]);
         }}
+        width={600}
         className="!center_div"
       >
-        <QRCode value={links} className="!w-[300px] !h-[300px]" />
+        <RecipientsTableView tableData={links.data} from="viewTransfer" />
       </Modal>
     </div>
   );

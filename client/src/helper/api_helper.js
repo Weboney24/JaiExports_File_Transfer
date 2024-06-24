@@ -55,6 +55,15 @@ export const uploadFiles = async (formData, onUploadProgress) => {
   }
 };
 
+export const resendAllMails = async (formData) =>
+  await axiosCustomRequest.post(`${base_url}/transfer/resend_mails`, formData);
+
+export const addMoreRecipients = async (formData) =>
+  await axiosCustomRequest.post(
+    `${base_url}/transfer/add_more_mails`,
+    formData
+  );
+
 export const deleteTransfer = async (id) =>
   await axiosCustomRequest.delete(
     `${base_url}/transfer/delete_one_user_files/${id}`

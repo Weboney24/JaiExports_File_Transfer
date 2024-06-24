@@ -144,12 +144,15 @@ const Users = () => {
       title: "Name",
       key: "name",
       dataIndex: "name",
+      align: "center",
+
       render: (data) => {
         return <h1 className="capitalize">{data}</h1>;
       },
     },
     {
       title: "Email",
+      align: "center",
       key: "email",
       dataIndex: "email",
     },
@@ -161,17 +164,17 @@ const Users = () => {
       render: (values, all_values) => {
         return (
           <div className="flex items-center justify-start gap-x-2">
-            <Tag
-              className={`center_div  border-none min-w-[100px] py-2 text-white font-bold  uppercase  ${
+            <h1
+              className={`center_div  border-none w-[100px] py-2  font-bold  uppercase  ${
                 values === "sub admin"
-                  ? "bg-blue-500"
+                  ? "text-blue-500"
                   : values === "admin"
-                  ? "bg-secondary"
-                  : "bg-primary"
+                  ? "text-secondary"
+                  : "text-primary"
               }`}
             >
-              <div className="!text-[10px]">{values}</div>
-            </Tag>
+              <div className="!text-[12px]">{values}</div>
+            </h1>
             {_.get(userData, "userSlice.role", "") === "admin" &&
               values != "admin" && (
                 <IconHelper.editUserIcon

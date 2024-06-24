@@ -13,7 +13,7 @@ const createUser = async (req, res) => {
       email: email,
       password: password,
     };
-    await sendMailWithHelper(email, mailData);
+    await sendMailWithHelper(email, mailData, "register");
     return res.status(200).send({ message: "user created successfully " });
   } catch (err) {
     if (err.code === 11000) {

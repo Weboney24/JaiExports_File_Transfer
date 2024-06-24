@@ -14,6 +14,7 @@ import {
   QRCode,
   Typography,
 } from "antd";
+import { LuMaximize } from "react-icons/lu";
 import {
   client_url,
   deleteTransfer,
@@ -27,7 +28,7 @@ import moment from "moment";
 import { FaCopy } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { ImQrcode } from "react-icons/im";
-import { MdOutlineDocumentScanner } from "react-icons/md";
+import RecipientsTableView from "../../component/RecipientsTableView";
 
 const MyTransfer = () => {
   const [data, setData] = useState([]);
@@ -39,6 +40,8 @@ const MyTransfer = () => {
   const [shift, setShift] = useState(false);
 
   const [links, setLinks] = useState(false);
+
+  const [expandView, setExpandView] = useState([]);
 
   const [form] = Form.useForm();
 
@@ -94,94 +97,80 @@ const MyTransfer = () => {
     {
       title: "S.NO",
       dataIndex: "_id",
-      width: 100,
+      width: 50,
       align: "center",
       render: (data, alldata, index) => {
-        return <span className="font-bold">{index + 1}</span>;
+        return <span className="font-bold !text-[12px]">{index + 1}</span>;
       },
     },
 
     {
-      title: "Scan",
-      dataIndex: "transfer_link",
+      title: (
+        <div className="flex items-center justify-center gap-x-2 !text-[12px]">
+          Count
+        </div>
+      ),
+      width: 100,
+      dataIndex: "count",
+      render: (values) => {
+        return <div className=" center_div !text-[12px]">{values}</div>;
+      },
+    },
+    {
+      title: "Link",
+      dataIndex: "trackgmail",
       align: "center",
-      render: (data) => {
+      width: 80,
+      render: (data, allData) => {
         return (
           <div
             onClick={() => {
-              setLinks(client_url + data);
+              setExpandView({ data: data, allData: allData });
             }}
-            className="center_div"
+            className="center_div "
           >
-            <MdOutlineDocumentScanner className="cursor-pointer" />
+            <LuMaximize className="cursor-pointer !text-[10px]" />
           </div>
         );
       },
     },
     {
-      title: (
-        <div className="flex items-center justify-center gap-x-2">
-          <IconHelper.downloadIcon /> Count
-        </div>
-      ),
-      dataIndex: "count",
-      render: (values) => {
-        return <div className=" center_div">{values}</div>;
-      },
-    },
-    {
-      title: "Transfer Link",
-      dataIndex: "transfer_link",
+      title: "Recipient Count",
+      align: "center",
+      dataIndex: "trackgmail",
+      width: 100,
       render: (data) => {
         return (
-          <div className="text-sm  gap-x-10 items-center flex justify-center  w-[100px] ">
-            <Typography.Paragraph
-              copyable={{
-                text: `${client_url}${data}`,
-              }}
-              className="pt-4"
-            ></Typography.Paragraph>
-
-            <Link target="_blank" to={`${client_url}${data}`}>
-              <IconHelper.clickLink className={`text-blue-400 !text-[14px]`} />
-            </Link>
+          <div className="text-primary font-bold line-clamp-1 !text-[12px]">
+            {data?.length}
           </div>
         );
       },
     },
-
     {
       title: "Transfer Name",
+      align: "center",
       dataIndex: "transfer_name",
+      width: 200,
       render: (data) => {
         return (
           <Tooltip title={data}>
-            <div className="capitalize w-[100px] line-clamp-1">{data}</div>
+            <div className="capitalize !text-[12px] line-clamp-1 !text-center !px-2">
+              {data}
+            </div>
           </Tooltip>
-        );
-      },
-    },
-    {
-      title: "Description",
-      dataIndex: "transfer_description",
-      render: (data) => {
-        return (
-          <abbr
-            title={data}
-            className="w-[100px] text-left no-underline line-clamp-1 text-sm"
-          >
-            {data}
-          </abbr>
         );
       },
     },
     {
       title: "Files",
       dataIndex: "files",
+      align: "center",
+      width: 50,
       render: (data) => {
         return (
-          <div className="lining-nums text-primary font-bold">
-            {data.length} <Divider type="vertical" />
+          <div className="lining-nums text-primary !text-[12px] font-bold">
+            {data?.length}
           </div>
         );
       },
@@ -189,46 +178,39 @@ const MyTransfer = () => {
     {
       title: "Size",
       dataIndex: "files",
+      align: "center",
+      width: 100,
       render: (data) => {
         return (
-          <div className="text-green-500 !text-sm !w-[100px]">
+          <div className="text-green-500 line-clamp-1 !text-[12px]">
             {filesize(
               _.sum(
-                data.map((res) => {
+                data?.map((res) => {
                   return res.size;
                 })
-              ).toFixed(1),
+              )?.toFixed(1),
               { standard: "jedec" }
             )}
           </div>
         );
       },
     },
-    // {
-    //   title: "Transfer / Expired Date ",
-    //   dataIndex: "createdAt",
-    //   render: (data) => {
-    //     return (
-    //       <div className="min-w-[200px]">
-    //         {moment(data).format("DD-MMMM-YYYY")}
-    //       </div>
-    //     );
-    //   },
-    // },
     {
       title: <div>Transfer / Expired Date </div>,
+      width: 200,
+      align: "center",
       dataIndex: "expire_date",
       render: (data, all) => {
         let expDate = moment.duration(moment(data).diff(new Date()));
         return (
           <div
-            className={`text-sm flex gap-x-2 !min-w-[100px] ${
+            className={`flex gap-x-2 !text-[12px] !justify-center !text-center !px-2 ${
               expDate.seconds() < 0 ? "text-secondary" : ""
             } `}
           >
             <div>{moment(all.createdAt).format("DD-MMMM-YYYY")}</div> / &nbsp;
             {expDate.seconds() < 0 ? (
-              <span>Expired</span>
+              <span className="text-red-500">Expired</span>
             ) : (
               `${moment(data).format("DD-MMMM-YYYY")}`
             )}
@@ -236,17 +218,27 @@ const MyTransfer = () => {
         );
       },
     },
+
+    {
+      title: <div>Password</div>,
+      width: 100,
+      dataIndex: "transfer_password",
+      align: "center",
+      render: (data) => {
+        return <div className="!text-[12px]">{data ? "Yes" : "No"}</div>;
+      },
+    },
     {
       title: "Actions",
-      // align: "center",
+      align: "center",
       dataIndex: "createdAt",
-
+      width: 120,
       render: (data, datas) => {
         let expDate = moment.duration(
           moment(datas.expire_date).diff(new Date())
         );
         return (
-          <div className={`flex justify-end`}>
+          <div className={`flex justify-end p-1`}>
             {expDate.seconds() > 0 && (
               <Tooltip
                 className={
@@ -386,109 +378,77 @@ const MyTransfer = () => {
       />
 
       <Modal
-        open={open.status || newLink}
+        open={open.status}
         footer={false}
         closable={false}
-        title={`${
-          newLink
-            ? "The password has been Updated, and a new share link has been generated."
-            : `${open.data ? "Update" : "Add"} File Password`
-        }`}
+        title={`${`${open.data ? "Update" : "Add"} File Password`}`}
         destroyOnClose
       >
-        {newLink ? (
-          <div className="flex flex-col items-center gap-y-4">
-            <img
-              src="https://i.pinimg.com/originals/32/b6/f2/32b6f2aeeb2d21c5a29382721cdc67f7.gif"
-              alt=""
-              className="w-full h-[200px]"
-            />
-
-            <div className="flex items-center gap-x-4">
-              <h1>Transfer Link : </h1>
-
-              <Typography.Paragraph
-                copyable={{
-                  text: `${client_url}${newLink}`,
-                }}
-                className="pt-4"
-              ></Typography.Paragraph>
-
-              <Link target="_blank" to={`${client_url}${newLink}`}>
-                <IconHelper.clickLink
-                  className={`text-blue-400 !text-[10px]`}
-                />
-              </Link>
-              <ImQrcode
-                onClick={() => {
-                  setLinks(`${client_url}${newLink}`);
-                }}
-                className="!text-[12px] cursor-pointer"
-              />
-            </div>
-            <div className="flex items-centers gap-x-5 py-4">
-              <div
-                onClick={() => {
-                  setNewLink("");
-                }}
-                className="primary_btn w-[150px] center_div !text-sm rounded-lg px-3 cursor-pointer"
-              >
-                Close
-              </div>
-            </div>
-          </div>
-        ) : (
-          <Form
-            layout="vertical"
-            className="pt-2"
-            onFinish={handleFinish}
-            form={form}
+        <Form
+          layout="vertical"
+          className="pt-2"
+          onFinish={handleFinish}
+          form={form}
+        >
+          <Form.Item
+            label="Enter File Password"
+            name="transfer_password"
+            rules={[
+              {
+                required: true,
+                message: "Please enter a file password",
+              },
+            ]}
           >
-            <Form.Item
-              label="Enter File Password"
-              name="transfer_password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter a file password",
-                },
-              ]}
-            >
-              <Input
-                placeholder="Enter File Password"
-                className="antd_input w-full !lining-nums"
-              />
-            </Form.Item>
-            <Form.Item>
-              <div className="!flex items-center w-[100%] gap-x-2 justify-start">
-                <Button
-                  loading={loading}
-                  htmlType="submit"
-                  className="primary_btn  !w-[100px]"
-                >
-                  Update
-                </Button>
-                <Button
-                  onClick={handleCancel}
-                  className="primary_btn !bg-white !text-primary !border-2 !border-primary  !w-[100px]"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </Form.Item>
-          </Form>
-        )}
+            <Input
+              placeholder="Enter File Password"
+              className="antd_input w-full !lining-nums"
+            />
+          </Form.Item>
+          <Form.Item>
+            <div className="!flex items-center w-[100%] gap-x-2 justify-start">
+              <Button
+                loading={loading}
+                htmlType="submit"
+                className="primary_btn  !w-[100px]"
+              >
+                Update
+              </Button>
+              <Button
+                onClick={handleCancel}
+                className="primary_btn !bg-white !text-primary !border-2 !border-primary  !w-[100px]"
+              >
+                Cancel
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
       </Modal>
+
       <Modal
-        open={links}
+        open={!_.isEmpty(expandView)}
         footer={false}
         closable={false}
+        destroyOnClose
         onCancel={() => {
-          setLinks(false);
+          setExpandView([]);
         }}
+        width={600}
         className="!center_div"
+        title={
+          <h1 className="capitalize font-Poppins">
+            {_.get(expandView, "allData.transfer_name", "")}
+          </h1>
+        }
       >
-        <QRCode value={links} className="!w-[300px] !h-[300px]" />
+        <RecipientsTableView
+          row={true}
+          tableData={expandView.data}
+          restData={expandView.allData}
+          from="viewTransfer"
+          setExpandView={setExpandView}
+          fetchData={fetchData}
+        />
       </Modal>
     </div>
   );

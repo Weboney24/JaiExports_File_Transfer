@@ -617,8 +617,8 @@
                                               >
                                                 <div
                                                   style="
-                                                    text-align: start;
-                                                    text-align-last: start;
+                                                    text-align: center;
+                                                    text-align-last: center;
                                                   "
                                                 >
                                                   <img
@@ -636,6 +636,7 @@
                                                       width: 80px;
                                                       height: auto;
                                                       max-width: 100%;
+                                                      margin: auto;
                                                     "
                                                   />
                                                   <br />
@@ -644,10 +645,28 @@
                                                       font-weight: 400;
                                                       font-style: normal;
                                                       color: rgb(255, 170, 13);
+                                                      font-size: 20px;
                                                     "
                                                     >Jai Export
                                                     Enterprises</span
                                                   >
+                                                  <br />
+                                                  <br />
+                                                  <br />
+                                                  <span
+                                                    style="
+                                                      font-weight: 400;
+                                                      font-style: normal;
+                                                      color: black;
+                                                      font-size: 20px;
+                                                    "
+                                                    ><%= transfername %></span
+                                                  >
+
+                                                  <img
+                                                    src="https://img.freepik.com/free-vector/transfer-files-concept-illustration_114360-5838.jpg?t=st=1719222760~exp=1719226360~hmac=02e6f29d77d3bdacf788faeda1d578054549be53dc2a2ded6d210cbfa42e3b07&w=740"
+                                                    alt=""
+                                                  />
                                                 </div>
                                               </div>
                                             </td>
@@ -680,28 +699,30 @@
                                             border-spacing: 0;
                                             margin-right: auto;
                                             margin-left: auto;
+                                            padding-top: 10px;
                                           "
                                         >
                                           <tr>
                                             <td valign="top" align="left">
                                               <div
-                                                class="pc-font-alt pc-w620-fontSize-30 pc-w620-lineHeight-133pc"
                                                 style="
                                                   line-height: 128%;
                                                   letter-spacing: -0.6px;
                                                   font-family: 'Fira Sans',
                                                     Arial, Helvetica, sans-serif;
 
-                                                  font-weight: 800;
                                                   font-variant-ligatures: normal;
-                                                  color: #151515;
+                                                  color: #151515 !important;
+                                                  text-decoration: none !important;
                                                   text-align: left;
                                                   text-align-last: left;
                                                 "
                                               >
                                                 <div>
-                                                  <span style="font-size: 12px"
-                                                    ><%= senderEmail %></span
+                                                  <span style="font-size: 12px">
+                                                    From : &nbsp; <%=
+                                                    senderEmail %> &nbsp; &nbsp;
+                                                    &nbsp;</span
                                                   >
                                                 </div>
                                               </div>
@@ -746,7 +767,7 @@
                                                   letter-spacing: -0.4px;
                                                   font-family: 'Fira Sans',
                                                     Arial, Helvetica, sans-serif;
-                                                  font-size: 22px;
+                                                  font-size: 12px;
                                                   font-weight: normal;
                                                   font-variant-ligatures: normal;
                                                   color: #9b9b9b;
@@ -755,8 +776,10 @@
                                                 "
                                               >
                                                 <div>
-                                                  <span
-                                                    ><%= seperate_link %></span
+                                                  <a
+                                                    href="<%= seperate_link %>"
+                                                  >
+                                                    <%= seperate_link %></a
                                                   >
                                                 </div>
                                               </div>
@@ -865,7 +888,7 @@
                                                                             Arial,
                                                                             Helvetica,
                                                                             sans-serif;
-                                                                          font-size: 18px;
+                                                                          font-size: 12px;
                                                                           font-weight: bold;
                                                                           font-variant-ligatures: normal;
                                                                           color: #151515;
@@ -875,7 +898,7 @@
                                                                       >
                                                                         <div>
                                                                           <span
-                                                                            >Items</span
+                                                                            >password</span
                                                                           >
                                                                         </div>
                                                                       </div>
@@ -986,7 +1009,7 @@
                                                                       Arial,
                                                                       Helvetica,
                                                                       sans-serif;
-                                                                    font-size: 18px;
+                                                                    font-size: 12px;
                                                                     font-weight: normal;
                                                                     font-variant-ligatures: normal;
                                                                     color: #151515;
@@ -994,7 +1017,8 @@
                                                                     text-align-last: left;
                                                                   "
                                                                 >
-                                                                  435426
+                                                                  <%= password
+                                                                  %>
                                                                 </div>
                                                               </td>
                                                             </tr>
@@ -1086,7 +1110,7 @@
                                                                             Arial,
                                                                             Helvetica,
                                                                             sans-serif;
-                                                                          font-size: 18px;
+                                                                          font-size: 12px;
                                                                           font-weight: bold;
                                                                           font-variant-ligatures: normal;
                                                                           color: #151515;
@@ -1208,7 +1232,7 @@
                                                                       Arial,
                                                                       Helvetica,
                                                                       sans-serif;
-                                                                    font-size: 18px;
+                                                                    font-size: 12px;
                                                                     font-weight: normal;
                                                                     font-variant-ligatures: normal;
                                                                     color: #151515;
@@ -1216,7 +1240,9 @@
                                                                     text-align-last: left;
                                                                   "
                                                                 >
-                                                                  21 June
+                                                                  <%=
+                                                                  expired_date
+                                                                  %>
                                                                 </div>
                                                               </td>
                                                             </tr>
@@ -1310,7 +1336,7 @@
                                                                             Arial,
                                                                             Helvetica,
                                                                             sans-serif;
-                                                                          font-size: 18px;
+                                                                          font-size: 12px;
                                                                           font-weight: bold;
                                                                           font-variant-ligatures: normal;
                                                                           color: #151515;
@@ -1431,7 +1457,7 @@
                                                                       Arial,
                                                                       Helvetica,
                                                                       sans-serif;
-                                                                    font-size: 18px;
+                                                                    font-size: 12px;
                                                                     font-weight: normal;
                                                                     font-variant-ligatures: normal;
                                                                     color: #151515;
@@ -1439,12 +1465,7 @@
                                                                     text-align-last: left;
                                                                   "
                                                                 >
-                                                                  Gregory
-                                                                  Swanson 26
-                                                                  Caesar Canyon
-                                                                  Suite 723,
-                                                                  West Newell,
-                                                                  62418
+                                                                  <%= message %>
                                                                 </div>
                                                               </td>
                                                             </tr>

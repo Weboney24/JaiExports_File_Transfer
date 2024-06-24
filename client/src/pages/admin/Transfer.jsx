@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 import { useState } from "react";
 import {
   Divider,
@@ -14,6 +15,8 @@ import {
   Typography,
   Select,
   notification,
+  Result,
+  Table,
 } from "antd";
 import {
   collectFileSize,
@@ -28,6 +31,7 @@ import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import Extra from "./Makeextra/Extra";
+import RecipientsTableView from "../../component/RecipientsTableView";
 
 const Transfer = () => {
   const [files, setFiles] = useState([]);
@@ -105,10 +109,10 @@ const Transfer = () => {
   };
 
   const handleFinish = async (values) => {
-    console.log(values);
-
     try {
+      setLoading(true);
       if (collectFileSize(files)?.actualSize > 2000000000) {
+        setLoading(false);
         return notification.error({
           message:
             "File size limit exceeded; maximum allowed is 2GB. Please remove or alter files to reduce the size.",
@@ -125,7 +129,10 @@ const Transfer = () => {
 
       if (values.custom_expire_date) {
         values.expire_date = values.custom_expire_date;
+      } else {
+        values.expire_date = moment().add(7, "days");
       }
+      values.client_url = client_url;
 
       const formData = new FormData();
       files.forEach((res) => {
@@ -158,17 +165,21 @@ const Transfer = () => {
           setLoading(true);
         }
       });
+
       setModalData(finalResult);
       setLoading(false);
       setOpen(true);
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleMore = () => {
     setModalData("");
     setOpen(false);
+    form.resetFields();
   };
 
   const handleViewMore = () => {
@@ -296,14 +307,15 @@ const Transfer = () => {
             />
           )}
         </div>
-        <div className="flex items-start  justify-start flex-col shadow-2xl bg-white rounded-2xl py-2 p-4 w-[30%] gap-y-2">
-          <div className="!w-full">
+        <div className="flex items-center  justify-start flex-col shadow-2xl bg-white rounded-2xl py-8 p-4 w-[30%] gap-y-10">
+          <div className="!w-full center_div flex-col gap-y-2">
             <Progress
               strokeColor={
                 collectFileSize(files)?.actualSize > 2000000000
                   ? "red"
                   : "#d97706"
               }
+              type="dashboard"
               percent={
                 !_.isEmpty(files)
                   ? collectFileSize(files)?.actualSize >= 2000000000
@@ -338,64 +350,65 @@ const Transfer = () => {
       </div>
 
       <Modal
-        width={400}
+        width={loading ? 300 : 600}
         open={open || loading}
         footer={false}
         onCancel={handleMore}
         centered
+        closable={false}
       >
         {loading ? (
-          <img
-            src="https://i.pinimg.com/originals/6b/e0/89/6be0890f52e31d35d840d4fe2e10385b.gif"
-            alt=""
-            className="w-full h-[200px]"
-          />
+          <div className="flex flex-col items-center">
+            <img
+              src="https://i.pinimg.com/originals/65/ba/48/65ba488626025cff82f091336fbf94bb.gif"
+              alt=""
+              className="w-full h-[200px]"
+            />
+            <h1>Please Wait ....</h1>
+          </div>
         ) : modalData ? (
           <div className="flex flex-col items-center gap-y-4 pt-10">
-            <div className="text-sm   gap-x-4 items-center flex justify-start w-full px-6 ">
-              <span>Transfer Link :</span>
+            <Result
+              status="success"
+              title={
+                <h1 className="!text-[16px] font-bold py-2">
+                  Files have been successfully uploaded and sent to all
+                  recipients.
+                </h1>
+              }
+              // subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+              extra={[
+                <div>
+                  <RecipientsTableView tableData={modalData} />
+                  <div className="flex items-center gap-x-4 justify-center py-10">
+                    <Button type="primary" key="console" onClick={handleMore}>
+                      Transfer More
+                    </Button>
 
-              <Typography.Paragraph
-                copyable={{
-                  text: `${client_url}${_.get(modalData, "data", "")}`,
-                }}
-                className="pt-4"
-              ></Typography.Paragraph>
-
-              <Link
-                target="_blank"
-                to={`${client_url}${_.get(modalData, "data", "")}`}
-              >
-                <IconHelper.clickLink
-                  className={`text-blue-400 !text-[10px]`}
-                />
-              </Link>
-            </div>
-            <QRCode
-              className="!w-[300px] !h-[300px]"
-              value={`${client_url}${_.get(modalData, "data", "")}`}
+                    <Button key="buy" onClick={handleViewMore}>
+                      View My Transfer
+                    </Button>
+                  </div>
+                </div>,
+              ]}
             />
-
-            <div className="flex items-centers gap-x-5 py-2">
-              <Tag
-                className="cursor-pointer hover:shadow-2xl bg-white shadow-inner py-1 px-4"
-                onClick={handleMore}
-              >
-                Transfer More
-              </Tag>
-              <Tag
-                onClick={handleViewMore}
-                className="cursor-pointer hover:shadow-2xl bg-white shadow-inner py-1 px-4"
-              >
-                View My Transfer
-              </Tag>
-            </div>
           </div>
         ) : (
-          <Progress
-            strokeColor={"#d97706"}
-            percent={((percentage?.loaded / percentage?.total) * 100).toFixed()}
-          />
+          <div className="flex flex-col items-center">
+            <img
+              src="https://media.tenor.com/dHAJxtIpUCoAAAAi/loading-animation.gif"
+              alt=""
+              className="w-[200px] "
+            />
+            <Progress
+              strokeColor={"#d97706"}
+              percent={(
+                (percentage?.loaded / percentage?.total) *
+                100
+              ).toFixed()}
+            />
+            <h1>Please Wait ....</h1>
+          </div>
         )}
       </Modal>
     </div>

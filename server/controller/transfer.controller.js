@@ -1,4 +1,5 @@
 const TransferSchema = require("../models/transfer.models");
+const UseSchema = require("../models/user.models");
 const { Types } = require("mongoose");
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
 const { s3Client } = require("../config/s3.config");
@@ -6,20 +7,24 @@ const _ = require("lodash");
 const fs = require("fs");
 const path = require("path");
 const moment = require("moment");
+const { sendMailWithHelper } = require("./mailHelper");
 
 const makeTransfer = async (req, res) => {
   try {
-    const result = _.get(req, "files", []).map(async (res) => {
-      console.log(res);
+    const userData = await UseSchema.find({ _id: req.userData.id });
 
+    const result = _.get(req, "files", []).map((res) => {
+      console.log(res);
       return {
         location: res.filename,
         name: res.originalname,
         size: res.size,
+        mimetype: res.mimetype,
       };
     });
 
     const media = result;
+    console.log(media);
     const data = JSON.parse(req.body.data);
 
     let formData = {
@@ -34,7 +39,26 @@ const makeTransfer = async (req, res) => {
       files: media,
     };
     await TransferSchema.create(formData);
-    return res.status(200).send({ data: formData.transfer_link });
+
+    let mailData = {
+      senderEmail: _.get(userData, "[0].email", ""),
+      transfername: formData.transfer_name,
+      password: formData.transfer_password || "No Password",
+      expired_date: moment(
+        formData.custom_expire_date || formData.expire_date
+      ).format("DD/MM/YYYY"),
+      message: formData.transfer_description || "No Message",
+      seperate_link: `${data.client_url}${formData.transfer_link}`,
+    };
+
+    formData.trackgmail.map(async (res) => {
+      mailData.seperate_link = `${data.client_url}${res.link}`;
+      await sendMailWithHelper(res.gmail, mailData, "generateLink");
+    });
+    formData.trackgmail;
+    return res.status(200).send({
+      data: { anonymous: formData.transfer_link, all: formData.trackgmail },
+    });
   } catch (err) {
     console.log(err);
     return res.status(500).send({ message: err });
@@ -97,10 +121,74 @@ const removeTransferPassword = async (req, res) => {
   }
 };
 
+const resendEmails = async (req, res) => {
+  try {
+    const userData = await UseSchema.find({ _id: req.body.user_id });
+    const fileDetails = await TransferSchema.find({ _id: req.body.file_id });
+
+    let mailData = {
+      senderEmail: _.get(userData, "[0].email", ""),
+      transfername: _.get(fileDetails, "[0].transfer_name", ""),
+      password:
+        _.get(fileDetails, "[0].transfer_password", "") || "No Password",
+      expired_date: moment(_.get(fileDetails, "[0].expire_date", "")).format(
+        "DD/MM/YYYY"
+      ),
+      message:
+        _.get(fileDetails, "[0].transfer_description", "") || "No Message",
+    };
+
+    _.get(req, "body.resend_mails", []).map(async (res) => {
+      mailData.seperate_link = `${req.body.client_url}${res.link}`;
+      await sendMailWithHelper(res.gmail, mailData, "generateLink");
+    });
+    return res.status(200).send({ message: "success" });
+  } catch (err) {
+    return res.status(500).send("Transfer");
+  }
+};
+
+const addMoreRecipients = async (req, res) => {
+  try {
+    const userData = await UseSchema.find({ _id: req.body.user_id });
+    const fileDetails = await TransferSchema.find({ _id: req.body.file_id });
+
+    let mailData = {
+      senderEmail: _.get(userData, "[0].email", ""),
+      transfername: _.get(fileDetails, "[0].transfer_name", ""),
+      password:
+        _.get(fileDetails, "[0].transfer_password", "") || "No Password",
+      expired_date: moment(_.get(fileDetails, "[0].expire_date", "")).format(
+        "DD/MM/YYYY"
+      ),
+      message:
+        _.get(fileDetails, "[0].transfer_description", "") || "No Message",
+    };
+
+    await TransferSchema.findByIdAndUpdate(
+      {
+        _id: req.body.file_id,
+      },
+      { $push: { trackgmail: req.body.trackgmail } }
+    );
+
+    _.get(req, "body.trackgmail", []).map(async (res) => {
+      mailData.seperate_link = `${req.body.client_url}${res.link}`;
+      await sendMailWithHelper(res.gmail, mailData, "generateLink");
+    });
+    return res.status(200).send({ message: "success" });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send("Transfer");
+  }
+};
+
 module.exports = {
   makeTransfer,
   getOneUserFiles,
   getAllUserFiles,
   deleteTransfer,
   removeTransferPassword,
+  resendEmails,
+  addMoreRecipients,
 };
