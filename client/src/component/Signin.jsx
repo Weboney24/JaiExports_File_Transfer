@@ -90,7 +90,10 @@ const Sighin = () => {
                 },
               ]}
             >
-              <Input placeholder="Enter Email" className="antd_input" />
+              <Input
+                placeholder="Enter Email"
+                className="antd_input !w-[400px]"
+              />
             </Form.Item>
             <Form.Item
               label={<span className="text-white">Password</span>}

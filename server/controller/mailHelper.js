@@ -31,6 +31,8 @@ const sendMailWithHelper = async (email, data, type) => {
     if (type === "download count") {
       // mailTemplate.cc = "info@jai-india.com";
       mailTemplate.subject = "Notification for Downloading File Transfer Links";
+    } else if (type === "generateLink") {
+      mailTemplate.subject = `A new file link has been sent to you by ${data?.senderEmail}`;
     }
 
     config.sendMail(mailTemplate, (err, info) => {

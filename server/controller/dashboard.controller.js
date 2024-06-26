@@ -271,7 +271,14 @@ const updateDownloadCount = async (req, res) => {
 const changePassword = async (req, res) => {
   try {
     const { id } = req.userData;
-    const { password } = req.body;
+    const { old_password, password } = req.body;
+    const result = await User.findOne({ _id: id });
+    let verifyPassword = await bcrypt.compare(old_password, result.password);
+    if (!verifyPassword) {
+      return res.status(500).send({
+        message: "The old password entered is incorrect.",
+      });
+    }
     let formData = {};
     formData.password = await bcrypt.hash(password, 10);
     formData.password_alise = password;

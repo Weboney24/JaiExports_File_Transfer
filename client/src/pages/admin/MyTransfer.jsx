@@ -149,15 +149,13 @@ const MyTransfer = () => {
     },
     {
       title: "Transfer Name",
-      align: "center",
+
       dataIndex: "transfer_name",
       width: 200,
       render: (data) => {
         return (
           <Tooltip title={data}>
-            <div className="capitalize !text-[12px] line-clamp-1 !text-center !px-2">
-              {data}
-            </div>
+            <div className="capitalize !text-[12px] line-clamp-1">{data}</div>
           </Tooltip>
         );
       },
@@ -198,13 +196,12 @@ const MyTransfer = () => {
     {
       title: <div>Transfer / Expired Date </div>,
       width: 200,
-      align: "center",
       dataIndex: "expire_date",
       render: (data, all) => {
         let expDate = moment.duration(moment(data).diff(new Date()));
         return (
           <div
-            className={`flex gap-x-2 !text-[12px] !justify-center !text-center !px-2 ${
+            className={`flex gap-x-2 !text-[12px] !px-2 ${
               expDate.seconds() < 0 ? "text-secondary" : ""
             } `}
           >

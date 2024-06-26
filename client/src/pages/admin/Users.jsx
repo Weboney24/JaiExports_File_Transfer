@@ -144,17 +144,17 @@ const Users = () => {
       title: "Name",
       key: "name",
       dataIndex: "name",
-      align: "center",
-
       render: (data) => {
-        return <h1 className="capitalize">{data}</h1>;
+        return <h1 className="capitalize !text-[12px]">{data}</h1>;
       },
     },
     {
       title: "Email",
-      align: "center",
       key: "email",
       dataIndex: "email",
+      render: (data) => {
+        return <h1 className="capitalize !text-[12px]">{data}</h1>;
+      },
     },
     {
       title: "Role",

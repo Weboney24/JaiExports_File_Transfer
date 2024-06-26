@@ -11,11 +11,11 @@ const DefaultHeader = () => {
 
   useEffect(() => {
     setDummy(!dummy);
-  }, []);
+  }, [moment()]);
 
   return (
     <div className="flex items-center justify-between z-50 h-[50px] fixed w-[100vw] lg:w-[87vw] lg:h-[80px] bg-secondary text-white shadow px-5">
-      <div className="lg:!text-3xl text-md tracking-wider text-primary  lg:mt-0 mt-2">
+      <div className="lg:!text-3xl text-md tracking-wider text-primary !font-['Baskerville_Old_Face']  lg:mt-0 mt-2">
         Jai Export Enterprises
       </div>
       <div className="flex  gap-x-4 items-center">

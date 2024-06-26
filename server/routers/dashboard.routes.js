@@ -5,6 +5,7 @@ const {
   changePassword,
   checkUserRole,
 } = require("../controller/dashboard.controller");
+const { verifyToken } = require("./verifytoke");
 
 const router = require("express").Router();
 

@@ -183,7 +183,5 @@ export const collectFileSize = (files) => {
 };
 
 export const UrlHelper = () => {
-  return `${Date.now()}${uuidv4()?.split("-")?.join("")}${Date.now()}${uuidv4()
-    ?.split("-")
-    ?.join("")}`;
+  return `${Date.now()}${uuidv4()?.slice(0, 5)?.split("-")?.join("")}`;
 };

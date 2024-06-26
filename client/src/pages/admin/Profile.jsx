@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IconHelper } from "../../helper/Icon_helper";
 import { Button, Divider, Form, Input, notification } from "antd";
 import { changePassword } from "../../helper/api_helper";
+import _ from "lodash";
 
 const Profile = () => {
   const [form] = Form.useForm();
@@ -15,8 +16,9 @@ const Profile = () => {
       form.resetFields();
       notification.success({ message: "Password changed successfully" });
     } catch (err) {
+      console.log(err);
       notification.error({
-        message: "Something went wrong when changing password",
+        message: _.get(err, "response.data.message", ""),
       });
     } finally {
       setLoading(false);
@@ -31,7 +33,22 @@ const Profile = () => {
         </h1>
       </div>
       <Divider />
-      <Form form={form} layout="vertical" onFinish={handleChnagePassword}>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleChnagePassword}
+        className="flex flex-col gap-y-4"
+      >
+        <Form.Item
+          label="Enter Old Password"
+          name="old_password"
+          rules={[{ required: true, message: "Enter New Password" }]}
+        >
+          <Input
+            placeholder="Enter Old Password"
+            className="w-[400px] !antd_input"
+          />
+        </Form.Item>
         <Form.Item
           label="Enter Password"
           name="password"
