@@ -28,6 +28,7 @@ import {
   Table,
   Card,
   Avatar,
+  Result,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import { Logo } from "../helper/ImageHelper";
@@ -37,6 +38,7 @@ import fileDownload from "js-file-download";
 import { FcExpired } from "react-icons/fc";
 import axios from "axios";
 import { DownloadOutlined } from "@ant-design/icons";
+import { IoSadOutline } from "react-icons/io5";
 
 const Files = () => {
   const navigate = useLocation();
@@ -52,7 +54,7 @@ const Files = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [linkStatus, setLinkStatus] = useState(false);
+  const [expired, setExpired] = useState(false);
 
   const [form] = Form.useForm();
 
@@ -75,7 +77,7 @@ const Files = () => {
         _.get(navigate, "pathname", "").split("/")[2]
       );
       if (_.isEmpty(_.get(result, "data.data", ""))) {
-        // navigation("/*");
+        setExpired(true);
       } else {
         console.log(_.get(result, "data.data.[0].password", ""));
         if (_.get(result, "data.data.[0].password", "")) {
@@ -187,65 +189,84 @@ const Files = () => {
               Jai Export Enterprises
             </h1>
           </div>
-          <div className="flex justify-center flex-col items-center !w-[70%]">
-            <div className=" pt-2 flex items-center capitalize justify-start gap-x-2">
-              <div className="w-[150px] text-right  px-2 line-clamp-1 text-slate-800">
-                Transfer Name
-              </div>
-              {_.get(datas, "[0].transfer_name", [])}
-            </div>
-
-            <div className="capitalize pt-2 flex items-start justify-start gap-x-2">
-              <div className="w-[150px] text-right  px-2 line-clamp-1 text-slate-800">
-                Total File
-              </div>
-              {collectFileSize(_.get(datas, "[0].files", []))?.textAlise}
-            </div>
-
-            <div className="capitalize pt-2 flex items-start justify-start gap-x-2">
-              <div className="w-[150px] text-right  px-2 line-clamp-1 text-slate-800">
-                Expired Date
-              </div>
-              {moment(_.get(datas, "[0].expire_date", [])).format(
-                "DD-MMMM-YYYY"
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-wrap w-[80%] justify-center gap-5 pt-4">
-            {_.get(datas, "[0].files", []).map((res, index) => {
-              return (
-                <Card
-                  key={index}
-                  hoverable
-                  loading={loading}
-                  className="w-[40%]  min-h-[120px] relative"
-                >
-                  <Card.Meta
-                    avatar={<Avatar src={fileTypeHelper(res.mimetype)} />}
-                    title={filesize(res.size)}
-                    description={<h1 className="line-clamp-2">{res.name}</h1>}
-                  />
-                  <div className="absolute top-4 right-6 ">
-                    <DownloadOutlined
-                      className="cursor-pointer hover:text-primary"
-                      onClick={() => {
-                        handleDownload(res);
-                      }}
-                    />
+          {expired ? (
+            <Result
+              status="404"
+              title="Oops, there was a problem with your link"
+              subTitle={
+                <span>
+                  It seems your link has expired or wasn't copied correctly.
+                  <br />
+                  Please check and try again, or ask your friend to send another
+                  one.
+                </span>
+              }
+            />
+          ) : (
+            <>
+              <div className="flex justify-center flex-col items-center !w-[70%]">
+                <div className=" pt-2 flex items-center capitalize justify-start gap-x-2">
+                  <div className="w-[150px] text-right  px-2 line-clamp-1 text-slate-800">
+                    Transfer Name
                   </div>
-                </Card>
-              );
-            })}
-          </div>
-          <Button
-            className="primary_btn !w-[30%] mt-10"
-            onClick={() => {
-              handleDownloadAll();
-            }}
-          >
-            Download All
-          </Button>
+                  {_.get(datas, "[0].transfer_name", [])}
+                </div>
+
+                <div className="capitalize pt-2 flex items-start justify-start gap-x-2">
+                  <div className="w-[150px] text-right  px-2 line-clamp-1 text-slate-800">
+                    Total File
+                  </div>
+                  {collectFileSize(_.get(datas, "[0].files", []))?.textAlise}
+                </div>
+
+                <div className="capitalize pt-2 flex items-start justify-start gap-x-2">
+                  <div className="w-[150px] text-right  px-2 line-clamp-1 text-slate-800">
+                    Expired Date
+                  </div>
+                  {moment(_.get(datas, "[0].expire_date", [])).format(
+                    "DD-MMMM-YYYY"
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap w-[80%] justify-center gap-5 pt-4">
+                {_.get(datas, "[0].files", []).map((res, index) => {
+                  return (
+                    <Card
+                      key={index}
+                      hoverable
+                      loading={loading}
+                      className="w-[40%]  min-h-[120px] relative"
+                    >
+                      <Card.Meta
+                        avatar={<Avatar src={fileTypeHelper(res.mimetype)} />}
+                        title={filesize(res.size)}
+                        description={
+                          <h1 className="line-clamp-2">{res.name}</h1>
+                        }
+                      />
+                      <div className="absolute top-4 right-6 ">
+                        <DownloadOutlined
+                          className="cursor-pointer hover:text-primary"
+                          onClick={() => {
+                            handleDownload(res);
+                          }}
+                        />
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+              <Button
+                className="primary_btn !w-[30%] mt-10"
+                onClick={() => {
+                  handleDownloadAll();
+                }}
+              >
+                Download All
+              </Button>
+            </>
+          )}
         </div>
       )}
       <Modal
