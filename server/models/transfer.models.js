@@ -23,6 +23,10 @@ const transferSchema = new Schema(
     },
     transfer_description: String,
     files: Array,
+    custom_options: {
+      type: Boolean,
+      required: true,
+    },
     count: {
       type: Number,
       default: 0,

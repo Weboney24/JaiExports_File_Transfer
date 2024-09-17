@@ -1,9 +1,4 @@
-import {
-  MdEditNote,
-  MdOutlineDashboard,
-  MdOutlineDeleteOutline,
-  MdOutlineSettings,
-} from "react-icons/md";
+import { MdEditNote, MdOutlineDashboard, MdOutlineDeleteOutline, MdOutlineSettings, MdOutlineUpdate } from "react-icons/md";
 import { TbUsers } from "react-icons/tb";
 import { MdPersonAddAlt } from "react-icons/md";
 import { AiOutlineUserDelete } from "react-icons/ai";
@@ -14,11 +9,7 @@ import { MdOutlineDelete } from "react-icons/md";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { MdTransferWithinAStation } from "react-icons/md";
 import { LuFileSymlink } from "react-icons/lu";
-import {
-  FaExternalLinkAlt,
-  FaRegFileExcel,
-  FaRegFilePdf,
-} from "react-icons/fa";
+import { FaExternalLinkAlt, FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
 import { CiFileOn } from "react-icons/ci";
 import { FiDownload, FiDownloadCloud } from "react-icons/fi";
 import { RiUserShared2Line } from "react-icons/ri";
@@ -69,6 +60,7 @@ export const IconHelper = {
   excel: FaRegFileExcel,
   editIcon: MdEditNote,
   deleteIcon2: MdOutlineDeleteOutline,
+  expireIcon: MdOutlineUpdate,
 };
 
 export const navbar = [
@@ -111,52 +103,25 @@ export const navbar = [
 ];
 
 export const copyHelper = (value) => {
-  console.log(value);
+  
 
   try {
     window?.navigator?.clipboard?.writeText(value);
     message.success("Link copied");
-    console.log("enter");
+    
   } catch (err) {
     console.log(err);
   }
 };
 
 export const fileTypeHelper = (type) => {
-  if (
-    [
-      "image/jpeg",
-      "image/png",
-      "image/gif",
-      "image/webp",
-      "",
-      "jpeg",
-      "png",
-      "gif",
-      "webp",
-    ].includes(type)
-  ) {
+  if (["image/jpeg", "image/png", "image/gif", "image/webp", "", "jpeg", "png", "gif", "webp"].includes(type)) {
     return "https://png.pngtree.com/png-vector/20190508/ourmid/pngtree-gallery-vector-icon-png-image_1028015.jpg";
   } else if (["application/pdf"].includes(type)) {
     return "https://media.istockphoto.com/id/1356214382/vector/pdf-file-icon-format-pdf-download-document-image-button-vector-doc-icon.jpg?s=612x612&w=0&k=20&c=Pp0h1HBQynL2JOVu9rMVlcX711XvjXR3UujOuPLck9M=";
-  } else if (
-    [
-      "application/vnd.ms-excel",
-      "application/msexcel",
-      "application/x-msexcel",
-      "application/x-excel",
-      "application/x-dos_ms_excel",
-      "application/xls",
-      "application/x-xls",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    ].includes(type)
-  ) {
+  } else if (["application/vnd.ms-excel", "application/msexcel", "application/x-msexcel", "application/x-excel", "application/x-dos_ms_excel", "application/xls", "application/x-xls", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"].includes(type)) {
     return "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Microsoft_Office_Excel_%282019%E2%80%93present%29.svg/1101px-Microsoft_Office_Excel_%282019%E2%80%93present%29.svg.png";
-  } else if (
-    [
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ].includes(type)
-  ) {
+  } else if (["application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(type)) {
     return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkDY7I2XNodvnhc7le1_N4Z43p0iAufJtZlw&s";
   } else {
     return "https://static.vecteezy.com/system/resources/previews/024/090/509/non_2x/folder-file-documents-free-png.png";

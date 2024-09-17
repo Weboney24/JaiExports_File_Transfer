@@ -1,34 +1,13 @@
 import { useEffect, useState } from "react";
-import { copyHelper, IconHelper } from "../../helper/Icon_helper";
-import {
-  Divider,
-  Table,
-  Tag,
-  Popconfirm,
-  notification,
-  Modal,
-  Form,
-  Input,
-  Button,
-  Tooltip,
-  QRCode,
-  Typography,
-} from "antd";
+import { IconHelper } from "../../helper/Icon_helper";
+import { Divider, Table, Tag, Popconfirm, notification, Modal, Form, Input, Button, Tooltip, DatePicker } from "antd";
 import { LuMaximize } from "react-icons/lu";
-import {
-  client_url,
-  deleteTransfer,
-  getOneUserFiles,
-  removeTransferPassword,
-  updateTransferPassword,
-} from "../../helper/api_helper";
+import { deleteTransfer, getOneUserFiles, removeTransferPassword, updateTransferPassword } from "../../helper/api_helper";
 import _ from "lodash";
 import { filesize } from "filesize";
 import moment from "moment";
-import { FaCopy } from "react-icons/fa6";
-import { Link } from "react-router-dom";
-import { ImQrcode } from "react-icons/im";
 import RecipientsTableView from "../../component/RecipientsTableView";
+import dayjs from "dayjs";
 
 const MyTransfer = () => {
   const [data, setData] = useState([]);
@@ -36,21 +15,23 @@ const MyTransfer = () => {
 
   const [open, setOpen] = useState({ status: false, data: "", id: "" });
 
-  const [newLink, setNewLink] = useState("");
   const [shift, setShift] = useState(false);
 
-  const [links, setLinks] = useState(false);
-
   const [expandView, setExpandView] = useState([]);
+
+  const [expire, setExpire] = useState(false);
 
   const [form] = Form.useForm();
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const result = await getOneUserFiles();
       setData(_.get(result, "data.data", []));
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,18 +39,29 @@ const MyTransfer = () => {
     fetchData();
   }, []);
 
-  const handleEdit_or_Add = (value) => {
-    if (value.transfer_password) {
-      form.setFieldsValue(value);
+  const handleEdit_or_Add = (value, balance) => {
+    if (balance) {
+      setOpen((pre) => ({
+        ...pre,
+        status: true,
+        data: value.expire_date,
+        id: value._id,
+      }));
+      setExpire(true);
+    } else {
+      setExpire(false);
+      if (value.transfer_password) {
+        form.setFieldsValue(value);
+      }
+      setOpen((pre) => ({
+        ...pre,
+        status: true,
+        data: value.transfer_password,
+        id: value._id,
+      }));
     }
-
-    setOpen((pre) => ({
-      ...pre,
-      status: true,
-      data: value.transfer_password,
-      id: value._id,
-    }));
   };
+
 
   const handleRemovePassword = async (value) => {
     try {
@@ -78,8 +70,8 @@ const MyTransfer = () => {
         transfer_password: "",
         transfer_link: "".concat(Date.now()),
       };
-      const result = await removeTransferPassword(formData);
-      setNewLink(_.get(result, "data.data", ""));
+      await removeTransferPassword(formData);
+
       notification.success({
         message: "Transfer password removed successfully",
       });
@@ -105,11 +97,7 @@ const MyTransfer = () => {
     },
 
     {
-      title: (
-        <div className="flex items-center justify-center gap-x-2 !text-[12px]">
-          Count
-        </div>
-      ),
+      title: <div className="flex items-center justify-center gap-x-2 !text-[12px]">Count</div>,
       width: 100,
       dataIndex: "count",
       render: (values) => {
@@ -140,11 +128,7 @@ const MyTransfer = () => {
       dataIndex: "trackgmail",
       width: 100,
       render: (data) => {
-        return (
-          <div className="text-primary font-bold line-clamp-1 !text-[12px]">
-            {data?.length}
-          </div>
-        );
+        return <div className="text-primary font-bold line-clamp-1 !text-[12px]">{data?.length - 1}</div>;
       },
     },
     {
@@ -166,11 +150,7 @@ const MyTransfer = () => {
       align: "center",
       width: 50,
       render: (data) => {
-        return (
-          <div className="lining-nums text-primary !text-[12px] font-bold">
-            {data?.length}
-          </div>
-        );
+        return <div className="lining-nums text-primary !text-[12px] font-bold">{data?.length}</div>;
       },
     },
     {
@@ -200,17 +180,9 @@ const MyTransfer = () => {
       render: (data, all) => {
         let expDate = moment.duration(moment(data).diff(new Date()));
         return (
-          <div
-            className={`flex gap-x-2 !text-[12px] !px-2 ${
-              expDate.seconds() < 0 ? "text-secondary" : ""
-            } `}
-          >
-            <div>{moment(all.createdAt).format("DD-MMMM-YYYY")}</div> / &nbsp;
-            {expDate.seconds() < 0 ? (
-              <span className="text-red-500">Expired</span>
-            ) : (
-              `${moment(data).format("DD-MMMM-YYYY")}`
-            )}
+          <div className={`flex gap-x-2 !text-[12px] !px-2 ${expDate.seconds() < 0 ? "text-secondary" : ""} `}>
+            <div>{moment(all.createdAt).format("DD/MM/YYYY")}</div> - &nbsp;
+            {expDate.seconds() < 0 ? <span className="text-red-500">Expired</span> : `${moment(data).format("DD/MM/YYYY")}`}
           </div>
         );
       },
@@ -231,28 +203,17 @@ const MyTransfer = () => {
       dataIndex: "createdAt",
       width: 120,
       render: (data, datas) => {
-        let expDate = moment.duration(
-          moment(datas.expire_date).diff(new Date())
-        );
+        let expDate = moment.duration(moment(datas.expire_date).diff(new Date()));
         return (
           <div className={`flex justify-end p-1`}>
             {expDate.seconds() > 0 && (
-              <Tooltip
-                className={
-                  _.get(datas, "transfer_password", "")
-                    ? "visible"
-                    : "invisible"
-                }
-                title={`Remove Password`}
-              >
+              <Tooltip className={_.get(datas, "transfer_password", "") ? "visible" : "invisible"} title={`Remove Password`}>
                 <Tag
                   onClick={() => {
                     handleRemovePassword(datas);
                   }}
                   color={"#fed353"}
-                  className={`flex items-center gap-x-1 cursor-pointer !p-2 ${
-                    expDate.seconds() < 0 ? "hidden" : "flex"
-                  }`}
+                  className={`flex items-center gap-x-1 cursor-pointer !p-2 ${expDate.seconds() < 0 ? "hidden" : "flex"}`}
                 >
                   <IconHelper.removePassword />
                 </Tag>
@@ -269,30 +230,31 @@ const MyTransfer = () => {
                   handleDelete(datas);
                 }}
               >
-                <Tag
-                  color="#fe8a1b"
-                  className={` flex items-center gap-x-1 cursor-pointer !p-2 `}
-                >
+                <Tag color="#fe8a1b" className={` flex items-center gap-x-1 cursor-pointer !p-2 `}>
                   <IconHelper.deleteIcon />
                 </Tag>
               </Popconfirm>
             </Tooltip>
 
-            {expDate.seconds() > 0 && (
-              <Tooltip
-                title={`${
-                  _.get(datas, "transfer_password", "") ? "Edit" : "Add"
-                } Password `}
+            <Tooltip title={`Edit Expiry Date`}>
+              <Tag
+                onClick={() => {
+                  handleEdit_or_Add(datas, "date");
+                }}
+                color="#29354c"
+                className={` flex items-center gap-x-1 cursor-pointer !p-2 `}
               >
+                <IconHelper.expireIcon />
+              </Tag>
+            </Tooltip>
+
+            {expDate.seconds() > 0 && (
+              <Tooltip title={`${_.get(datas, "transfer_password", "") ? "Edit" : "Add"} Password `}>
                 <Tag
                   onClick={() => {
                     handleEdit_or_Add(datas);
                   }}
-                  color={
-                    _.get(datas, "transfer_password", "")
-                      ? "#d97706"
-                      : "#ffaa0d"
-                  }
+                  color={_.get(datas, "transfer_password", "") ? "#d97706" : "#ffaa0d"}
                   className={`flex items-center gap-x-1 cursor-pointer !p-2`}
                 >
                   <IconHelper.keySecurity />
@@ -328,13 +290,13 @@ const MyTransfer = () => {
         id: open.id,
       };
       formData.transfer_link = "".concat(Date.now()).concat("b3P3ts");
-      const result = await updateTransferPassword(formData);
-      fetchData();
-      handleCancel();
-      setNewLink(_.get(result, "data.data", ""));
+      await updateTransferPassword(formData);
+
       notification.success({
-        message: "Transfer password updated successfully",
+        message: expire ? "Link Expired Date Updated successfully" : "Transfer password updated successfully",
       });
+      handleCancel();
+      fetchData();
     } catch (err) {
       console.log(err);
     } finally {
@@ -352,6 +314,11 @@ const MyTransfer = () => {
     form.resetFields();
   };
 
+  const disabledDate = (current) => {
+    let currentDate = moment();
+    return current < currentDate.subtract(1, "days");
+  };
+
   return (
     <div className="w-full h-full overflow-y-scroll p-5 font-Texturina ">
       <div className="flex w-full justify-between items-center">
@@ -359,62 +326,39 @@ const MyTransfer = () => {
           <IconHelper.myTransfers /> My Transfers
         </h1>
         <div className="lining-nums px-4 lg:text-2xl text-sm">
-          Total Transfer :{" "}
-          <span className="text-primary font-bold">{data.length}</span>
+          Total Transfer : <span className="text-primary font-bold">{data.length}</span>
         </div>
       </div>
       <Divider />
 
-      <Table
-        loading={loading}
-        columns={columns}
-        dataSource={data}
-        scroll={{ x: 200 }}
-        size="small"
-        pagination={{ pageSize: 20, position: ["bottomCenter"] }}
-      />
+      <Table loading={loading} columns={columns} dataSource={data} scroll={{ x: 200 }} size="small" pagination={{ pageSize: 20, position: ["bottomCenter"] }} />
 
-      <Modal
-        open={open.status}
-        footer={false}
-        closable={false}
-        title={`${`${open.data ? "Update" : "Add"} File Password`}`}
-        destroyOnClose
-      >
-        <Form
-          layout="vertical"
-          className="pt-2"
-          onFinish={handleFinish}
-          form={form}
-        >
-          <Form.Item
-            label="Enter File Password"
-            name="transfer_password"
-            rules={[
-              {
-                required: true,
-                message: "Please enter a file password",
-              },
-            ]}
-          >
-            <Input
-              placeholder="Enter File Password"
-              className="antd_input w-full !lining-nums"
-            />
-          </Form.Item>
+      <Modal destroyOnClose open={open.status} footer={false} closable={false} title={expire ? "Edit Expiry Date" : `${`${open.data ? "Update" : "Add"} File Password`}`}>
+        <Form layout="vertical" className="pt-2" onFinish={handleFinish} form={form}>
+          {expire ? (
+            <Form.Item label="Select New Date" name="expire_date">
+              <DatePicker defaultValue={dayjs(moment(open.data).format("DD/MM/YYYY"), "DD/MM/YYYY")} format={{ format: "DD/MM/YYYY", type: "mask" }} placeholder="Enter Expiry Date" className="antd_input  !lining-nums" use12Hours disabledDate={disabledDate} />
+            </Form.Item>
+          ) : (
+            <Form.Item
+              label="Enter File Password"
+              name="transfer_password"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter a file password",
+                },
+              ]}
+            >
+              <Input.Password placeholder="Enter File Password" className="antd_input w-[400px] !lining-nums" />
+            </Form.Item>
+          )}
           <Form.Item>
             <div className="!flex items-center w-[100%] gap-x-2 justify-start">
-              <Button
-                loading={loading}
-                htmlType="submit"
-                className="primary_btn  !w-[100px]"
-              >
+              <Button loading={loading} htmlType="submit" className="primary_btn  !w-[100px]">
                 Update
               </Button>
-              <Button
-                onClick={handleCancel}
-                className="primary_btn !bg-white !text-primary !border-2 !border-primary  !w-[100px]"
-              >
+              <Button onClick={handleCancel} className="primary_btn !bg-white !text-primary !border-2 !border-primary  !w-[100px]">
                 Cancel
               </Button>
             </div>
@@ -432,20 +376,9 @@ const MyTransfer = () => {
         }}
         width={600}
         className="!center_div"
-        title={
-          <h1 className="capitalize font-Poppins">
-            {_.get(expandView, "allData.transfer_name", "")}
-          </h1>
-        }
+        title={<h1 className="capitalize font-Poppins">{_.get(expandView, "allData.transfer_name", "")}</h1>}
       >
-        <RecipientsTableView
-          row={true}
-          tableData={expandView.data}
-          restData={expandView.allData}
-          from="viewTransfer"
-          setExpandView={setExpandView}
-          fetchData={fetchData}
-        />
+        <RecipientsTableView row={true} tableData={expandView.data} restData={expandView.allData} from="viewTransfer" setExpandView={setExpandView} fetchData={fetchData} />
       </Modal>
     </div>
   );

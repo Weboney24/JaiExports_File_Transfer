@@ -1,27 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Divider, Select, Tag } from "antd";
+/* eslint-disable no-empty */
+import { useEffect, useState } from "react";
+import { Divider, Select } from "antd";
 import { IconHelper } from "../../helper/Icon_helper";
-import {
-  Modal,
-  Form,
-  Input,
-  Button,
-  notification,
-  Table,
-  Popconfirm,
-} from "antd";
-import {
-  createUser,
-  deleteUser,
-  getAllUser,
-  sendMail,
-  updateUser,
-} from "../../helper/api_helper";
+import { Modal, Form, Input, Button, notification, Table, Popconfirm } from "antd";
+import { createUser, deleteUser, getAllUser, sendMail, updateUser } from "../../helper/api_helper";
 import _ from "lodash";
-import moment from "moment";
-import DefaultHeader from "../DefaultHeader";
 import { GrMailOption } from "react-icons/gr";
-import { FaShareFromSquare } from "react-icons/fa6";
 import { BsSendArrowDown } from "react-icons/bs";
 import { useSelector } from "react-redux";
 
@@ -40,8 +24,7 @@ const Users = () => {
       setLoading(true);
       const result = await getAllUser();
       setAllUser(_.sortBy(_.get(result, "data.data", []), "name"));
-    } catch (err) {
-      console.log("error fetching data", err);
+    } catch {
     } finally {
       setLoading(false);
     }
@@ -55,7 +38,7 @@ const Users = () => {
     try {
       setLoading(true);
       if (id) {
-        const result = await updateUser(values, id);
+        await updateUser(values, id);
         notification.success({ message: "User successfully updated." });
         if (roleChange) {
           //  if(_.get(result, "data.data", "") === )
@@ -110,7 +93,7 @@ const Users = () => {
   const handleSendMail = async (values) => {
     try {
       setLoading(true);
-      const responce = await sendMail({ id: values._id });
+      await sendMail({ id: values._id });
       notification.success({ message: "Invitaion Successfully Sended" });
     } catch (err) {
       notification.error({
@@ -164,26 +147,17 @@ const Users = () => {
       render: (values, all_values) => {
         return (
           <div className="flex items-center justify-start gap-x-2">
-            <h1
-              className={`center_div  border-none w-[100px] py-2  font-bold  uppercase  ${
-                values === "sub admin"
-                  ? "text-blue-500"
-                  : values === "admin"
-                  ? "text-secondary"
-                  : "text-primary"
-              }`}
-            >
+            <h1 className={`center_div  border-none w-[100px] py-2  font-bold  uppercase  ${values === "sub admin" ? "text-blue-500" : values === "admin" ? "text-secondary" : "text-primary"}`}>
               <div className="!text-[12px]">{values}</div>
             </h1>
-            {_.get(userData, "userSlice.role", "") === "admin" &&
-              values != "admin" && (
-                <IconHelper.editUserIcon
-                  onClick={() => {
-                    handleRoleChangeRequest(all_values);
-                  }}
-                  className={`bg-lime-500 rounded-lg size-[20px] p-1 cursor-pointer text-white `}
-                />
-              )}
+            {_.get(userData, "userSlice.role", "") === "admin" && values != "admin" && (
+              <IconHelper.editUserIcon
+                onClick={() => {
+                  handleRoleChangeRequest(all_values);
+                }}
+                className={`bg-lime-500 rounded-lg size-[20px] p-1 cursor-pointer text-white `}
+              />
+            )}
           </div>
         );
       },
@@ -257,30 +231,13 @@ const Users = () => {
             }}
             className="px-3 py-1 text-sm text-black rounded-lg flex  capitalize items-center gap-x-2 cursor-pointer"
           >
-            <IconHelper.addUserIcon className="lg:text-3xl text-xl bg-light_yellow rounded-md p-1 text-white" />{" "}
-            <span className="hidden lg:block">create user</span>
+            <IconHelper.addUserIcon className="lg:text-3xl text-xl bg-light_yellow rounded-md p-1 text-white" /> <span className="hidden lg:block">create user</span>
           </div>
         </div>
       </div>
       <Divider />
-      <Table
-        loading={loading}
-        columns={columns}
-        dataSource={user}
-        scroll={{ x: 100 }}
-        size="small"
-        pagination={{ pageSize: 20, position: ["bottomCenter"] }}
-      />
-      <Modal
-        open={open || roleChange}
-        footer={false}
-        closable={false}
-        title={`${id ? "Update" : "Create new"}  User ${
-          roleChange ? "Role" : ""
-        }`}
-        onCancel={handleCancel}
-        destroyOnClose
-      >
+      <Table loading={loading} columns={columns} dataSource={user} scroll={{ x: 100 }} size="small" pagination={{ pageSize: 20, position: ["bottomCenter"] }} />
+      <Modal open={open || roleChange} footer={false} closable={false} title={`${id ? "Update" : "Create new"}  User ${roleChange ? "Role" : ""}`} onCancel={handleCancel} destroyOnClose>
         <Form layout="vertical pt-4" onFinish={hanldeFinish} form={form}>
           <Form.Item
             label={"Name"}
@@ -292,10 +249,7 @@ const Users = () => {
               },
             ]}
           >
-            <Input
-              placeholder="Enter user name"
-              className="antd_input w-full"
-            />
+            <Input placeholder="Enter user name" className="antd_input w-full" />
           </Form.Item>
           {roleChange ? (
             <Form.Item
@@ -329,10 +283,7 @@ const Users = () => {
                   },
                 ]}
               >
-                <Input
-                  placeholder="Enter user email"
-                  className="antd_input w-full"
-                />
+                <Input placeholder="Enter user email" className="antd_input w-full" />
               </Form.Item>
               {id ? (
                 ""
@@ -347,21 +298,13 @@ const Users = () => {
                     },
                   ]}
                 >
-                  <Input.Password
-                    placeholder="Enter user password"
-                    className="antd_input w-full"
-                  />
+                  <Input.Password placeholder="Enter user password" className="antd_input w-full" />
                 </Form.Item>
               )}
             </>
           )}
           <Form.Item className="pt-4">
-            <Button
-              loading={loading}
-              htmlType="submit"
-              block
-              className="primary_btn font-Texturina"
-            >
+            <Button loading={loading} htmlType="submit" block className="primary_btn font-Texturina">
               {id ? "Update" : "Create"}
             </Button>
           </Form.Item>

@@ -64,7 +64,7 @@ const Dashboard = () => {
       title: "User",
       dataIndex: "user_id",
       render: (data) => {
-        console.log(data);
+        
         return (
           <span className="capitalize text-primary font-semibold cursor-pointer flex items-center gap-x-2">
             {_.get(data, "name", "")}

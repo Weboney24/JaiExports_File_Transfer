@@ -1,18 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { Divider, Modal, QRCode, Table, Tooltip, Typography } from "antd";
+import { Divider, Modal, Table, Tooltip } from "antd";
 
 import _ from "lodash";
 import { filesize } from "filesize";
 import moment from "moment";
-import { client_url, getAllUserFiles } from "../helper/api_helper";
-import { copyHelper, IconHelper } from "../helper/Icon_helper";
-import DefaultHeader from "./DefaultHeader";
-import { FaCopy } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { MdOutlineDocumentScanner } from "react-icons/md";
+import { getAllUserFiles } from "../helper/api_helper";
 import { LuMaximize } from "react-icons/lu";
 import RecipientsTableView from "../component/RecipientsTableView";
+import { IconHelper } from "../helper/Icon_helper";
 
 const AllTransfers = () => {
   const [data, setData] = useState([]);
@@ -54,15 +50,7 @@ const AllTransfers = () => {
       render: (data) => {
         return (
           <Tooltip title={_.get(data, "name", "")}>
-            <h1
-              className={`capitalize ${
-                _.get(data, "name", "") === "admin"
-                  ? "text-secondary"
-                  : "text-secondary"
-              } font-semibold cursor-pointer  !line-clamp-1 !text-[12px]  gap-x-2`}
-            >
-              {_.get(data, "name", "")}
-            </h1>
+            <h1 className={`capitalize ${_.get(data, "name", "") === "admin" ? "text-secondary" : "text-secondary"} font-semibold cursor-pointer  !line-clamp-1 !text-[12px]  gap-x-2`}>{_.get(data, "name", "")}</h1>
           </Tooltip>
         );
       },
@@ -80,11 +68,7 @@ const AllTransfers = () => {
     //   },
     // },
     {
-      title: (
-        <div className="flex items-center justify-center gap-x-2 !text-[12px]">
-          Count
-        </div>
-      ),
+      title: <div className="flex items-center justify-center gap-x-2 !text-[12px]">Count</div>,
       width: 100,
       dataIndex: "count",
       render: (values) => {
@@ -115,11 +99,7 @@ const AllTransfers = () => {
       dataIndex: "trackgmail",
       width: 100,
       render: (data) => {
-        return (
-          <div className="text-primary font-bold line-clamp-1 !text-[12px]">
-            {data?.length}
-          </div>
-        );
+        return <div className="text-primary font-bold line-clamp-1 !text-[12px]">{data?.length}</div>;
       },
     },
     {
@@ -141,11 +121,7 @@ const AllTransfers = () => {
       align: "center",
       width: 50,
       render: (data) => {
-        return (
-          <div className="lining-nums text-primary !text-[12px] font-bold">
-            {data?.length}
-          </div>
-        );
+        return <div className="lining-nums text-primary !text-[12px] font-bold">{data?.length}</div>;
       },
     },
     {
@@ -154,7 +130,6 @@ const AllTransfers = () => {
       align: "center",
       width: 100,
       render: (data) => {
-        console.log(data, "fileSize");
         return (
           <div className="text-green-500 line-clamp-1 !text-[12px]">
             {filesize(
@@ -177,17 +152,9 @@ const AllTransfers = () => {
       render: (data, all) => {
         let expDate = moment.duration(moment(data).diff(new Date()));
         return (
-          <div
-            className={`flex gap-x-2 !text-[12px]  !px-2 ${
-              expDate.seconds() < 0 ? "text-secondary" : ""
-            } `}
-          >
+          <div className={`flex gap-x-2 !text-[12px]  !px-2 ${expDate.seconds() < 0 ? "text-secondary" : ""} `}>
             <div>{moment(all.createdAt).format("DD-MMMM-YYYY")}</div> / &nbsp;
-            {expDate.seconds() < 0 ? (
-              <span className="text-red-500">Expired</span>
-            ) : (
-              `${moment(data).format("DD-MMMM-YYYY")}`
-            )}
+            {expDate.seconds() < 0 ? <span className="text-red-500">Expired</span> : `${moment(data).format("DD-MMMM-YYYY")}`}
           </div>
         );
       },
@@ -211,20 +178,12 @@ const AllTransfers = () => {
           <IconHelper.allTransfers /> All Transfers
         </h1>
         <div className="lining-nums px-4">
-          Total Transfer :
-          <span className="text-primary font-bold">{data?.length}</span>
+          Total Transfer :<span className="text-primary font-bold">{data?.length}</span>
         </div>
       </div>
       <Divider />
-      {console.log(links.allData)}
-      <Table
-        scroll={{ x: 100 }}
-        bordered
-        columns={columns}
-        dataSource={data}
-        pagination={{ pageSize: 20, position: ["bottomCenter"] }}
-        size="small"
-      />
+
+      <Table scroll={{ x: 100 }} bordered columns={columns} dataSource={data} pagination={{ pageSize: 20, position: ["bottomCenter"] }} size="small" />
       <Modal
         open={!_.isEmpty(links)}
         footer={false}

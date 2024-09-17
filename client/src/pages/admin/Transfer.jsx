@@ -1,45 +1,24 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-key */
 import { useState } from "react";
-import {
-  Divider,
-  Upload,
-  Tag,
-  Empty,
-  Progress,
-  Form,
-  Input,
-  Button,
-  Modal,
-  DatePicker,
-  QRCode,
-  Typography,
-  Select,
-  notification,
-  Result,
-  Table,
-} from "antd";
-import {
-  collectFileSize,
-  IconHelper,
-  UrlHelper,
-} from "../../helper/Icon_helper";
+import { Divider, Upload, Empty, Progress, Form, Input, Button, Modal, DatePicker, Select, notification, Result, Checkbox } from "antd";
+import { collectFileSize, IconHelper, UrlHelper } from "../../helper/Icon_helper";
 import { filesize } from "filesize";
 import _ from "lodash";
 import { client_url, uploadFiles } from "../../helper/api_helper";
-import { v4 as uuidv4 } from "uuid";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import Extra from "./Makeextra/Extra";
 import RecipientsTableView from "../../component/RecipientsTableView";
+import dayjs from "dayjs";
 
 const Transfer = () => {
   const [files, setFiles] = useState([]);
-  const [dummy, setDummy] = useState(false);
 
-  const userData = useSelector((data) => data);
+  useSelector((data) => data);
 
-  console.log(userData);
+
 
   const navigate = useNavigate();
 
@@ -49,13 +28,10 @@ const Transfer = () => {
     total: "",
   });
 
-  const [aliseName, setAliseName] = useState({
-    name: "",
-    status: "",
-  });
-
   const [modalData, setModalData] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [options, setOptions] = useState(true);
 
   const { Dragger } = Upload;
 
@@ -65,12 +41,12 @@ const Transfer = () => {
     name: "file",
     multiple: true,
     onChange(info) {
-      console.log(info, "gk");
+     
       setFiles(info.fileList);
     },
     fileList: files,
     onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
+    
     },
   };
 
@@ -83,49 +59,33 @@ const Transfer = () => {
     );
   };
 
-  const handleRandomGenerate = (value, flag) => {
-    try {
-      if (flag === "auto") {
-        setAliseName((pre) => ({
-          ...pre,
-          name: uuidv4().slice(0, 7).concat(Date.now()),
-          status: "auto",
-        }));
-        form.setFieldsValue({
-          transfer_link: uuidv4().slice(0, 7).concat(Date.now()),
-        });
-      } else {
-        setAliseName((pre) => ({
-          ...pre,
-          name: value.trim() || "",
-          status: "custom",
-        }));
-        form.setFieldsValue({ transfer_link: value.trim() || "" });
-      }
-      setDummy(!dummy);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const handleFinish = async (values) => {
     try {
       setLoading(true);
       if (collectFileSize(files)?.actualSize > 2000000000) {
         setLoading(false);
         return notification.error({
-          message:
-            "File size limit exceeded; maximum allowed is 2GB. Please remove or alter files to reduce the size.",
+          message: "File size limit exceeded; maximum allowed is 2GB. Please remove or alter files to reduce the size.",
         });
       }
 
-      values.trackgmail = values.recipient_email?.map((res) => {
-        return {
-          link: UrlHelper(),
-          gmail: res,
-        };
-      });
+      if (options) {
+        values.trackgmail = values.recipient_email?.map((res) => {
+          return {
+            link: UrlHelper(),
+            gmail: res,
+          };
+        });
+      } else {
+        values.trackgmail = [
+          {
+            link: UrlHelper(),
+            gmail: "anonymous",
+          },
+        ];
+      }
       values.transfer_link = UrlHelper();
+      values.custom_options = options;
 
       if (values.custom_expire_date) {
         values.expire_date = values.custom_expire_date;
@@ -157,11 +117,6 @@ const Transfer = () => {
             loaded: "",
           }));
           setFiles([]);
-          setAliseName((pre) => ({
-            ...pre,
-            name: "",
-            status: "",
-          }));
           setLoading(true);
         }
       });
@@ -170,7 +125,7 @@ const Transfer = () => {
       setLoading(false);
       setOpen(true);
     } catch (err) {
-      console.log(err);
+      notification.error({ message: "An error occurred while uploading" });
     } finally {
       setLoading(false);
     }
@@ -219,12 +174,7 @@ const Transfer = () => {
             <div className="flex items-start gap-y-4  justify-between w-full lg:flex-row flex-col-reverse gap-x-10 lg:px-4">
               {/* form */}
               <div className="w-full  p-5 rounded-lg  bg-white flex flex-col gap-y-6">
-                <Form
-                  layout="vertical"
-                  form={form}
-                  onFinish={handleFinish}
-                  className="flex flex-wrap gap-x-10 gap-y-2"
-                >
+                <Form layout="vertical" form={form} onFinish={handleFinish} className="flex flex-wrap gap-x-10 gap-y-2">
                   <Form.Item
                     label="Transfer Name"
                     name="transfer_name"
@@ -235,61 +185,50 @@ const Transfer = () => {
                       },
                     ]}
                   >
-                    <Input
-                      placeholder="Enter Transfer Name"
-                      className="antd_input "
-                    />
+                    <Input placeholder="Enter Transfer Name" className="antd_input " />
                   </Form.Item>
 
                   <Form.Item label="Description" name="transfer_description">
-                    <Input.TextArea
-                      placeholder="Enter Description"
-                      className="antd_input  !h-[100px]"
-                    />
+                    <Input.TextArea placeholder="Enter Description" className="antd_input  !h-[100px]" />
                   </Form.Item>
                   <Form.Item label="Transfer Password" name="transfer_password">
-                    <Input
-                      placeholder="Enter Transfer Password"
-                      className="antd_input  !h-[100px]"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Custom Expiry Date"
-                    name="custom_expire_date"
-                  >
-                    <DatePicker
-                      placeholder="Enter Expiry Date"
-                      className="antd_input  !lining-nums"
-                      use12Hours
-                      disabledDate={disabledDate}
-                      format={"DD:MM:YYYY"}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Select Recipient Email"
-                    name="recipient_email"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please add/select a recipient email",
-                      },
-                    ]}
-                  >
-                    <Select
-                      virtual={false}
-                      mode="tags"
-                      className="antd_input  !min-h-[10px] !w-[640px] focus:!border-none hover:border-none"
-                      tokenSeparators={[","]}
-                      placeholder="Select Recipient Email"
-                    ></Select>
+                    <Input.Password placeholder="Enter Transfer Password" className="antd_input  !h-[100px]" />
                   </Form.Item>
 
-                  <Form.Item className="!w-full">
-                    <Button
-                      block
-                      className="primary_btn !w-[100px]"
-                      htmlType="submit"
+                  <Form.Item label="Custom Expiry Date" name="custom_expire_date" initialValue={dayjs(moment().add(7, "d").format("DD/MM/YYYY"), "DD/MM/YYYY")}>
+                    <DatePicker format={{ format: "DD/MM/YYYY", type: "mask" }} placeholder="Enter Expiry Date" className="antd_input  !lining-nums" use12Hours disabledDate={disabledDate} />
+                  </Form.Item>
+                  <Form.Item className="w-full" label="Select Send Option" name="custom_options">
+                    <p className="flex items-center gap-x-2 font-medium">
+                      <Checkbox
+                        checked={options}
+                        onChange={(e) => {
+                          setOptions(e.target.checked);
+                        }}
+                      />
+                      <span className="text-sm">{options ? "Send Message via Email" : "Create Link Only"} </span>
+                    </p>
+                  </Form.Item>
+
+                  {options ? (
+                    <Form.Item
+                      label="Select Recipient Email"
+                      name="recipient_email"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please add/select a recipient email",
+                        },
+                      ]}
                     >
+                      <Select virtual={false} mode="tags" className="antd_input  !min-h-[10px] !w-[640px] focus:!border-none hover:border-none" tokenSeparators={[","]} placeholder="Select Recipient Email"></Select>
+                    </Form.Item>
+                  ) : (
+                    ""
+                  )}
+
+                  <Form.Item className="!w-full">
+                    <Button block className="primary_btn !w-[100px]" htmlType="submit">
                       Upload
                     </Button>
                   </Form.Item>
@@ -297,39 +236,13 @@ const Transfer = () => {
               </div>
             </div>
           ) : (
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={
-                <div className="!font-Poppins text-sm">
-                  There are currently no files uploaded.
-                </div>
-              }
-            />
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<div className="!font-Poppins text-sm">There are currently no files uploaded.</div>} />
           )}
         </div>
         <div className="flex items-center  justify-start flex-col shadow-2xl bg-white rounded-2xl py-8 p-4 w-[30%] gap-y-10">
           <div className="!w-full center_div flex-col gap-y-2">
-            <Progress
-              strokeColor={
-                collectFileSize(files)?.actualSize > 2000000000
-                  ? "red"
-                  : "#d97706"
-              }
-              type="dashboard"
-              percent={
-                !_.isEmpty(files)
-                  ? collectFileSize(files)?.actualSize >= 2000000000
-                    ? 100
-                    : (
-                        (collectFileSize(files)?.actualSize / 2000000000) *
-                        100
-                      ).toFixed(1)
-                  : ""
-              }
-            />
-            <h1 className="lining-nums text-sm py-2">
-              Limit {collectFileSize(files)?.textAlise}&nbsp;/ 2GB
-            </h1>
+            <Progress strokeColor={collectFileSize(files)?.actualSize > 2000000000 ? "red" : "#d97706"} type="dashboard" percent={!_.isEmpty(files) ? (collectFileSize(files)?.actualSize >= 2000000000 ? 100 : ((collectFileSize(files)?.actualSize / 2000000000) * 100).toFixed(1)) : ""} />
+            <h1 className="lining-nums text-sm py-2">Limit {collectFileSize(files)?.textAlise}&nbsp;/ 2GB</h1>
           </div>
           <div className={` bg-white  shadow-inner w-[100%]  h-[inherit]`}>
             <Dragger {...props} showUploadList={false} className="!bg-white">
@@ -349,34 +262,18 @@ const Transfer = () => {
         {/* <Divider /> */}
       </div>
 
-      <Modal
-        width={loading ? 300 : 600}
-        open={open || loading}
-        footer={false}
-        onCancel={handleMore}
-        centered
-        closable={false}
-      >
+      <Modal width={loading ? 300 : 600} open={open || loading} footer={false} onCancel={handleMore} centered closable={false}>
         {loading ? (
           <div className="flex flex-col items-center">
-            <img
-              src="https://i.pinimg.com/originals/65/ba/48/65ba488626025cff82f091336fbf94bb.gif"
-              alt=""
-              className="w-full h-[200px]"
-            />
+            {/* <img src="https://media.tenor.com/dHAJxtIpUCoAAAAi/loading-animation.gif" alt="" className="w-[200px] " /> */}
+            <Progress type="circle" strokeColor={"#d97706"} percent={((percentage?.loaded / percentage?.total) * 100).toFixed() || 99} />
             <h1>Please Wait ....</h1>
           </div>
         ) : modalData ? (
           <div className="flex flex-col items-center gap-y-4 pt-10">
             <Result
               status="success"
-              title={
-                <h1 className="!text-[16px] font-bold py-2">
-                  Files have been successfully uploaded and sent to all
-                  recipients.
-                </h1>
-              }
-              // subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+              title={<h1 className="!text-[16px] font-bold py-2">Files have been successfully uploaded and sent to all recipients.</h1>}
               extra={[
                 <div>
                   <RecipientsTableView tableData={modalData} />
@@ -395,18 +292,8 @@ const Transfer = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center">
-            <img
-              src="https://media.tenor.com/dHAJxtIpUCoAAAAi/loading-animation.gif"
-              alt=""
-              className="w-[200px] "
-            />
-            <Progress
-              strokeColor={"#d97706"}
-              percent={(
-                (percentage?.loaded / percentage?.total) *
-                100
-              ).toFixed()}
-            />
+            <img src="https://media.tenor.com/dHAJxtIpUCoAAAAi/loading-animation.gif" alt="" className="w-[200px] " />
+            <Progress strokeColor={"#d97706"} percent={((percentage?.loaded / percentage?.total) * 100).toFixed()} />
             <h1>Please Wait ....</h1>
           </div>
         )}

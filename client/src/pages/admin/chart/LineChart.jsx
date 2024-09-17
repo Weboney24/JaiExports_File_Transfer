@@ -1,9 +1,9 @@
-import React from "react";
+
 import { Column } from "@ant-design/plots";
 
 const LineChart = (properties) => {
   const { users, getTotalTransfer } = properties;
-console.log(users)
+
   const data = users.map((res) => {
     return {
       name: res.name,

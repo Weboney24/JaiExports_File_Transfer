@@ -12,10 +12,7 @@ const { sendMailWithHelper } = require("./mailHelper");
 
 const getAllCounts = async (req, res) => {
   try {
-    const Total_Users = await User.aggregate([
-      { $match: { role: "user" } },
-      { $count: "count" },
-    ]);
+    const Total_Users = await User.aggregate([{ $match: { role: "user" } }, { $count: "count" }]);
     const Total_Transfers = await Transfer.aggregate([
       {
         $count: "count",
@@ -191,24 +188,22 @@ const getLinkStatus = async (req, res) => {
       const data = await Transfer.find({
         transfer_link: id,
       });
-      _.get(data, "[0].files", []).map((res) => {
-        if (
-          fs.existsSync(
-            `${path.join(__dirname, `../public/uploads/${res.filename}`)}`
-          )
-        ) {
-          fs.unlinkSync(
-            path.join(__dirname, `../public/uploads/${res.filename}`)
-          );
-        }
-      });
+      // _.get(data, "[0].files", []).map((res) => {
+      //   if (
+      //     fs.existsSync(
+      //       `${path.join(__dirname, `../public/uploads/${res.filename}`)}`
+      //     )
+      //   ) {
+      //     fs.unlinkSync(
+      //       path.join(__dirname, `../public/uploads/${res.filename}`)
+      //     );
+      //   }
+      // });
 
       return res.status(200).send({ data: [] });
     } else {
       return res.status(200).send({
-        data: [
-          { password: _.get(data, "[0].transfer_password", "") ? true : false },
-        ],
+        data: [{ password: _.get(data, "[0].transfer_password", "") ? true : false }],
       });
     }
   } catch (err) {
@@ -247,21 +242,13 @@ const updateDownloadCount = async (req, res) => {
     let mailData = {
       senderEmail: _.get(fetchGmail, "[0].gmail", ""),
       transfername: _.get(fileDetails, "[0].transfer_name", ""),
-      password:
-        _.get(fileDetails, "[0].transfer_password", "") || "No Password",
-      expired_date: moment(_.get(fileDetails, "[0].expire_date", "")).format(
-        "DD/MM/YYYY"
-      ),
-      message:
-        _.get(fileDetails, "[0].transfer_description", "") || "No Message",
+      password: _.get(fileDetails, "[0].transfer_password", "") || "No Password",
+      expired_date: moment(_.get(fileDetails, "[0].expire_date", "")).format("DD/MM/YYYY"),
+      message: _.get(fileDetails, "[0].transfer_description", "") || "No Message",
       seperate_link: `${req.body.client_url}`,
     };
 
-    await sendMailWithHelper(
-      _.get(finduserEmail, "[0].email", ""),
-      mailData,
-      "download count"
-    );
+    await sendMailWithHelper(_.get(finduserEmail, "[0].email", ""), mailData, "download count");
     return res.status(200).send({ message: "success" });
   } catch (err) {
     return res.status(500).send({ message: "err" });
@@ -292,10 +279,7 @@ const changePassword = async (req, res) => {
 const checkUserRole = async (req, res) => {
   try {
     const { id } = req.userData;
-    const result = await User.find(
-      { _id: id },
-      { password: 0, password_alise: 0 }
-    );
+    const result = await User.find({ _id: id }, { password: 0, password_alise: 0 });
     return res.status(200).send({ data: result });
   } catch (err) {
     return res.status(500).send({ message: "err" });

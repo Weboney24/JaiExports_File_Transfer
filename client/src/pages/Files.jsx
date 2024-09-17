@@ -79,7 +79,7 @@ const Files = () => {
       if (_.isEmpty(_.get(result, "data.data", ""))) {
         setExpired(true);
       } else {
-        console.log(_.get(result, "data.data.[0].password", ""));
+        
         if (_.get(result, "data.data.[0].password", "")) {
           setOpen(true);
         } else {

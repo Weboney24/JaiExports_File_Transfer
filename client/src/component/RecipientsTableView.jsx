@@ -1,34 +1,13 @@
 /* eslint-disable react/prop-types */
-import {
-  Button,
-  Form,
-  Modal,
-  notification,
-  QRCode,
-  Select,
-  Table,
-  Typography,
-} from "antd";
+import { Button, Form, Modal, notification, QRCode, Select, Table, Typography } from "antd";
 import _ from "lodash";
 import { Link } from "react-router-dom";
 import { IconHelper, UrlHelper } from "../helper/Icon_helper";
 import { useEffect, useState } from "react";
-import { LuMaximize } from "react-icons/lu";
 import { MdQrCode2 } from "react-icons/md";
-import {
-  addMoreRecipients,
-  client_url,
-  resendAllMails,
-} from "../helper/api_helper";
+import { addMoreRecipients, client_url, resendAllMails } from "../helper/api_helper";
 
-const RecipientsTableView = ({
-  tableData,
-  from,
-  row,
-  restData,
-  fetchData,
-  setExpandView,
-}) => {
+const RecipientsTableView = ({ tableData, from, row, restData, fetchData, setExpandView }) => {
   const [open, setOpen] = useState(false);
 
   const [selectedMails, setSelectedMails] = useState([]);
@@ -47,7 +26,6 @@ const RecipientsTableView = ({
       dataIndex: "link",
       align: "center",
       render: (data, all) => {
-        console.log(all);
         return (
           <div className="flex items-center gap-x-6 justify-center">
             <MdQrCode2
@@ -174,19 +152,11 @@ const RecipientsTableView = ({
         className={`${from ? "!w-[600px]" : ""}`}
       />
       <div className="flex flex-col py-6">
-        {!_.isEmpty(selectedMails) && (
-          <h1 className="text-sm font-Poppins">
-            Selected Emails : {selectedMails?.length}
-          </h1>
-        )}
+        {!_.isEmpty(selectedMails) && <h1 className="text-sm font-Poppins">Selected Emails : {selectedMails?.length}</h1>}
 
         <div className="flex items-center gap-x-4">
           {!_.isEmpty(selectedMails) && (
-            <Button
-              loading={loading}
-              className="primary_btn mt-4 !w-[200px] !text-white"
-              onClick={handleResenAllEmails}
-            >
+            <Button loading={loading} className="primary_btn mt-4 !w-[200px] !text-white" onClick={handleResenAllEmails}>
               {"Resend Email"}
             </Button>
           )}
@@ -202,23 +172,12 @@ const RecipientsTableView = ({
                   },
                 ]}
               >
-                <Select
-                  virtual={false}
-                  mode="tags"
-                  className="antd_input  !min-h-[10px] !w-[640px] focus:!border-none hover:border-none"
-                  tokenSeparators={[","]}
-                  placeholder="Select Recipient Email"
-                ></Select>
+                <Select virtual={false} mode="tags" className="antd_input  !min-h-[10px] !w-[640px] focus:!border-none hover:border-none" tokenSeparators={[","]} placeholder="Select Recipient Email"></Select>
               </Form.Item>
 
               <div className="flex justify-start gap-x-10">
                 <Form.Item>
-                  <Button
-                    loading={loading}
-                    block
-                    className="primary_btn !w-[150px]"
-                    htmlType="submit"
-                  >
+                  <Button loading={loading} block className="primary_btn !w-[150px]" htmlType="submit">
                     Add Recipient
                   </Button>
                 </Form.Item>
@@ -261,10 +220,7 @@ const RecipientsTableView = ({
         closable={false}
         footer={false}
       >
-        <QRCode
-          className="!w-[300px] !h-[300px]"
-          value={`${client_url}${open.link}`}
-        />
+        <QRCode className="!w-[300px] !h-[300px]" value={`${client_url}${open.link}`} />
       </Modal>
     </div>
   );
