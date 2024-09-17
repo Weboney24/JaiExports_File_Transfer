@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-key */
 import { useState } from "react";
-import { Divider, Upload, Empty, Progress, Form, Input, Button, Modal, DatePicker, Select, notification, Result, Checkbox } from "antd";
+import { Divider, Upload, Empty, Progress, Form, Input, Button, Modal, DatePicker, Select, notification, Result, Checkbox, Radio } from "antd";
 import { collectFileSize, IconHelper, UrlHelper } from "../../helper/Icon_helper";
 import { filesize } from "filesize";
 import _ from "lodash";
@@ -17,8 +17,6 @@ const Transfer = () => {
   const [files, setFiles] = useState([]);
 
   useSelector((data) => data);
-
-
 
   const navigate = useNavigate();
 
@@ -41,13 +39,10 @@ const Transfer = () => {
     name: "file",
     multiple: true,
     onChange(info) {
-     
       setFiles(info.fileList);
     },
     fileList: files,
-    onDrop(e) {
-    
-    },
+    onDrop(e) {},
   };
 
   const onDelete = (value) => {
@@ -69,7 +64,7 @@ const Transfer = () => {
         });
       }
 
-      if (options) {
+      if (options === "email") {
         values.trackgmail = values.recipient_email?.map((res) => {
           return {
             link: UrlHelper(),
@@ -85,7 +80,7 @@ const Transfer = () => {
         ];
       }
       values.transfer_link = UrlHelper();
-      values.custom_options = options;
+      values.custom_options = options === "email";
 
       if (values.custom_expire_date) {
         values.expire_date = values.custom_expire_date;
@@ -198,19 +193,22 @@ const Transfer = () => {
                   <Form.Item label="Custom Expiry Date" name="custom_expire_date" initialValue={dayjs(moment().add(7, "d").format("DD/MM/YYYY"), "DD/MM/YYYY")}>
                     <DatePicker format={{ format: "DD/MM/YYYY", type: "mask" }} placeholder="Enter Expiry Date" className="antd_input  !lining-nums" use12Hours disabledDate={disabledDate} />
                   </Form.Item>
-                  <Form.Item className="w-full" label="Select Send Option" name="custom_options">
-                    <p className="flex items-center gap-x-2 font-medium">
-                      <Checkbox
-                        checked={options}
-                        onChange={(e) => {
-                          setOptions(e.target.checked);
-                        }}
-                      />
-                      <span className="text-sm">{options ? "Send Message via Email" : "Create Link Only"} </span>
-                    </p>
+                  <Form.Item className="w-full" label="Select Send Option">
+                    <Radio.Group
+                      onChange={(e) => {
+                        setOptions(e.target.value);
+                      }}
+                    >
+                      <Radio name="mix" value={"email"}>
+                        Send Message via Email
+                      </Radio>
+                      <Radio name="mix" value={"copy"}>
+                        Create Link Only
+                      </Radio>
+                    </Radio.Group>
                   </Form.Item>
 
-                  {options ? (
+                  {options === "email" ? (
                     <Form.Item
                       label="Select Recipient Email"
                       name="recipient_email"

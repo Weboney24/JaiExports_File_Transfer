@@ -31,31 +31,20 @@
   font-weight: bold !important;
 }
 
-:where(.css-dev-only-do-not-override-djtmh8).ant-form-item
-  .ant-form-item-label
-  > label.ant-form-item-required:not(
-    .ant-form-item-required-mark-optional
-  )::before,
-:where(.css-dev-only-do-not-override-djtmh8).ant-form-item
-  .ant-form-item-explain-error {
+:where(.css-dev-only-do-not-override-djtmh8).ant-form-item .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before,
+:where(.css-dev-only-do-not-override-djtmh8).ant-form-item .ant-form-item-explain-error {
   color: var(--primary-color);
   font-weight: bold !important;
   font-family: var(--secondary-font) !important;
 }
-:where(.css-dev-only-do-not-override-djtmh8)[class^="ant-picker"]
-  [class^="ant-picker"],
-:where(.css-dev-only-do-not-override-djtmh8)[class*=" ant-picker"]
-  [class^="ant-picker"],
-:where(.css-dev-only-do-not-override-djtmh8)[class^="ant-picker"]
-  [class*=" ant-picker"],
-:where(.css-dev-only-do-not-override-djtmh8)[class*=" ant-picker"]
-  [class*=" ant-picker"] {
+:where(.css-dev-only-do-not-override-djtmh8)[class^="ant-picker"] [class^="ant-picker"],
+:where(.css-dev-only-do-not-override-djtmh8)[class*=" ant-picker"] [class^="ant-picker"],
+:where(.css-dev-only-do-not-override-djtmh8)[class^="ant-picker"] [class*=" ant-picker"],
+:where(.css-dev-only-do-not-override-djtmh8)[class*=" ant-picker"] [class*=" ant-picker"] {
   font-family: var(--secondary-font) !important;
 }
 
-:where(
-    .css-dev-only-do-not-override-djtmh8
-  ).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled) {
+:where(.css-dev-only-do-not-override-djtmh8).ant-input-outlined.ant-input-status-error:not(.ant-input-disabled) {
   border: 1px solid var(--primary-color) !important;
 }
 
@@ -88,13 +77,10 @@
   border-radius: 0px 0px !important;
 }
 
-:where(.css-dev-only-do-not-override-djtmh8).ant-pagination
-  .ant-pagination-item-active {
+:where(.css-dev-only-do-not-override-djtmh8).ant-pagination .ant-pagination-item-active {
   border: 1px solid var(--primary-color) !important;
 }
-:where(.css-dev-only-do-not-override-djtmh8).ant-pagination
-  .ant-pagination-item-active
-  a {
+:where(.css-dev-only-do-not-override-djtmh8).ant-pagination .ant-pagination-item-active a {
   color: var(--primary-color) !important;
 }
 
@@ -105,47 +91,21 @@
 }
 
 /* Table size */
-:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
-  .ant-table.ant-table-small
-  .ant-table-title,
-:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
-  .ant-table.ant-table-small
-  .ant-table-footer,
-:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
-  .ant-table.ant-table-small
-  .ant-table-cell,
-:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
-  .ant-table.ant-table-small
-  .ant-table-thead
-  > tr
-  > th,
-:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
-  .ant-table.ant-table-small
-  .ant-table-tbody
-  > tr
-  > th,
-:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
-  .ant-table.ant-table-small
-  .ant-table-tbody
-  > tr
-  > td,
-:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
-  .ant-table.ant-table-small
-  tfoot
-  > tr
-  > th,
-:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper
-  .ant-table.ant-table-small
-  tfoot
-  > tr
-  > td {
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper .ant-table.ant-table-small .ant-table-title,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper .ant-table.ant-table-small .ant-table-footer,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper .ant-table.ant-table-small .ant-table-cell,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper .ant-table.ant-table-small .ant-table-thead > tr > th,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper .ant-table.ant-table-small .ant-table-tbody > tr > th,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper .ant-table.ant-table-small .ant-table-tbody > tr > td,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper .ant-table.ant-table-small tfoot > tr > th,
+:where(.css-dev-only-do-not-override-djtmh8).ant-table-wrapper .ant-table.ant-table-small tfoot > tr > td {
   padding: 0px !important;
 }
 
-
 /* checkbox */
 
-.ant-checkbox-checked .ant-checkbox-inner {
+.ant-checkbox-checked .ant-checkbox-inner,
+.ant-radio-checked .ant-radio-inner {
   background-color: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
 }
