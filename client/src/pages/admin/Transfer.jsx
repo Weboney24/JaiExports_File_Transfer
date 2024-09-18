@@ -145,7 +145,7 @@ const Transfer = () => {
 
   return (
     <div className="!w-full h-[99vh] !overflow-y-scroll py-20 !p-5 !font-Poppins ">
-      <h1 className="text-3xl font-Texturina flex items-center gap-x-2">
+      <h1 className="lg:text-3xl font-Texturina flex items-center gap-x-2">
         <IconHelper.fileshare2 /> Make Transfers
       </h1>
       <h1 className="lining-nums hidden text-end">
@@ -163,47 +163,48 @@ const Transfer = () => {
       </h1>
       <Divider />
 
-      <div className="w-full flex gap-x-2">
-        <div className="center_div items-start w-[80%]">
+      <div className="w-full flex gap-x-2 lg:flex-row flex-col">
+        <div className="center_div items-start lg:w-[80%] w-full">
           {!_.isEmpty(files) ? (
             <div className="flex items-start gap-y-4  justify-between w-full lg:flex-row flex-col-reverse gap-x-10 lg:px-4">
               {/* form */}
-              <div className="w-full  p-5 rounded-lg  bg-white flex flex-col gap-y-6">
+              <div className="w-full  lg:p-5 rounded-lg  bg-white flex flex-col gap-y-6">
                 <Form layout="vertical" form={form} onFinish={handleFinish} className="flex flex-wrap gap-x-10 gap-y-2">
                   <Form.Item
-                    label="Transfer Name"
+                    label="Title"
                     name="transfer_name"
                     rules={[
                       {
                         required: true,
-                        message: "Please enter a transfer name",
+                        message: "Please enter a title",
                       },
                     ]}
+                    className="w-full md:w-[inherit]"
                   >
-                    <Input placeholder="Enter Transfer Name" className="antd_input " />
+                    <Input placeholder="Title" className="antd_input " />
                   </Form.Item>
 
-                  <Form.Item label="Description" name="transfer_description">
-                    <Input.TextArea placeholder="Enter Description" className="antd_input  !h-[100px]" />
+                  <Form.Item className="w-full md:w-[inherit]" label="Message" name="transfer_description">
+                    <Input.TextArea placeholder="Message" className="antd_input  !h-[100px]" />
                   </Form.Item>
-                  <Form.Item label="Transfer Password" name="transfer_password">
-                    <Input.Password placeholder="Enter Transfer Password" className="antd_input  !h-[100px]" />
+                  <Form.Item className="w-full md:w-[inherit]" label="Transfer Password" name="transfer_password">
+                    <Input.Password placeholder="Password" className="antd_input  !h-[100px]" />
                   </Form.Item>
 
-                  <Form.Item label="Custom Expiry Date" name="custom_expire_date" initialValue={dayjs(moment().add(7, "d").format("DD/MM/YYYY"), "DD/MM/YYYY")}>
+                  <Form.Item className="w-full md:w-[inherit]" label="Expiry Date" name="custom_expire_date" initialValue={dayjs(moment().add(7, "d").format("DD/MM/YYYY"), "DD/MM/YYYY")}>
                     <DatePicker format={{ format: "DD/MM/YYYY", type: "mask" }} placeholder="Enter Expiry Date" className="antd_input  !lining-nums" use12Hours disabledDate={disabledDate} />
                   </Form.Item>
-                  <Form.Item className="w-full" label="Select Send Option">
+                  <Form.Item className="w-full md:w-[inherit]" label="Select Send Option">
                     <Radio.Group
                       onChange={(e) => {
                         setOptions(e.target.value);
                       }}
                     >
                       <Radio name="mix" value={"email"}>
-                        Send Message via Email
+                        <span className="font-medium">Send Message via Email</span>
                       </Radio>
                       <Radio name="mix" value={"copy"}>
-                        Create Link Only
+                        <span className="font-medium">Create Link Only</span>
                       </Radio>
                     </Radio.Group>
                   </Form.Item>
@@ -218,8 +219,9 @@ const Transfer = () => {
                           message: "Please add/select a recipient email",
                         },
                       ]}
+                      className="w-full"
                     >
-                      <Select virtual={false} mode="tags" className="antd_input  !min-h-[10px] !w-[640px] focus:!border-none hover:border-none" tokenSeparators={[","]} placeholder="Select Recipient Email"></Select>
+                      <Select virtual={false} mode="tags" className="antd_input  !min-h-[10px] focus:!border-none hover:border-none" tokenSeparators={[","]} placeholder="Select Recipient Email"></Select>
                     </Form.Item>
                   ) : (
                     ""
@@ -237,7 +239,8 @@ const Transfer = () => {
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<div className="!font-Poppins text-sm">There are currently no files uploaded.</div>} />
           )}
         </div>
-        <div className="flex items-center  justify-start flex-col shadow-2xl bg-white rounded-2xl py-8 p-4 w-[30%] gap-y-10">
+        <hr className="lg:hidden block" />
+        <div className="flex items-center  justify-start flex-col md:shadow-2xl bg-white rounded-2xl py-8 p-4 lg:w-[30%] w-full gap-y-10">
           <div className="!w-full center_div flex-col gap-y-2">
             <Progress strokeColor={collectFileSize(files)?.actualSize > 2000000000 ? "red" : "#d97706"} type="dashboard" percent={!_.isEmpty(files) ? (collectFileSize(files)?.actualSize >= 2000000000 ? 100 : ((collectFileSize(files)?.actualSize / 2000000000) * 100).toFixed(1)) : ""} />
             <h1 className="lining-nums text-sm py-2">Limit {collectFileSize(files)?.textAlise}&nbsp;/ 2GB</h1>
@@ -253,7 +256,7 @@ const Transfer = () => {
             </Dragger>
           </div>
           {/* uploded files */}
-          <div className="flex flex-col w-[100%]   gap-y-2 items-center  min-h-[100px]">
+          <div className="flex flex-col w-[100%]   gap-y-2 items-center  min-h-[10px]">
             <Extra files={files} onDelete={onDelete} />
           </div>
         </div>

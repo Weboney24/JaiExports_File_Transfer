@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable no-empty */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Logo } from "../helper/ImageHelper";
 import { IconHelper, navbar } from "../helper/Icon_helper";
@@ -6,7 +8,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import _ from "lodash";
 import { useSelector, useDispatch } from "react-redux";
 import { Drawer } from "antd";
-import { IoIosArrowForward } from "react-icons/io";
 import { RxHamburgerMenu } from "react-icons/rx";
 import DefaultHeader from "../pages/DefaultHeader";
 import { checkUserRole } from "../helper/api_helper";
@@ -37,9 +38,7 @@ const Sidenav = () => {
 
   useEffect(() => {
     if (userData.role === "user") {
-      if (
-        ["/dashboard", "/all_transfer", "/users"].includes(location.pathname)
-      ) {
+      if (["/dashboard", "/all_transfer", "/users"].includes(location.pathname)) {
         navigate("/403");
       }
     }
@@ -75,27 +74,16 @@ const Sidenav = () => {
       <div className="w-full bg-secondary relative  h-full flex items-center flex-col py-10">
         <img src={Logo} alt="" className="w-[80px]" />
 
-        <div className="pt-12 flex flex-col gap-y-8 w-full">
+        <div className="pt-12 flex flex-col gap-y-6 w-full">
           {navbarData.map((res, index) => {
             return (
-              <Link
-                key={index}
-                to={`/${res.link}`}
-                className={`w-full ${
-                  location.pathname.split("/")[1] === res.link
-                    ? "text-light_yellow  !border-l-light_yellow"
-                    : "text-white"
-                }  flex items-center font-bold border-l-4 transition-all duration-700 ease-linear border-l-secondary justify-start px-4 gap-x-4 cursor-pointer hover:text-light_yellow font-Texturina`}
-              >
-                {<res.icons />} <h1>{res.name}</h1>
+              <Link key={index} to={`/${res.link}`} className={`w-full ${location.pathname.split("/")[1] === res.link ? "text-light_yellow  !border-l-light_yellow" : "text-white"}  flex items-center font-bold border-l-4 transition-all duration-700 ease-linear border-l-secondary justify-start   px-4 gap-x-4 cursor-pointer hover:text-light_yellow font-Texturina`}>
+                {<res.icons />} <h1 className="lg:text-[13px] xl:text-[16px]">{res.name}</h1>
               </Link>
             );
           })}
         </div>
-        <div
-          className="absolute bottom-[50px] flex items-center gap-x-2 cursor-pointer border px-4 rounded-md py-1  text-white"
-          onClick={handleLogout}
-        >
+        <div className="absolute bottom-[10px] flex items-center gap-x-2 cursor-pointer border px-4 rounded-md py-1  text-white" onClick={handleLogout}>
           <span>Logout</span>
           <IconHelper.logout />
         </div>
@@ -105,10 +93,10 @@ const Sidenav = () => {
 
   return (
     <div className="flex w-screen h-screen   items-start bg-white">
-      <div className="w-[13vw] h-full lg:block hidden">
+      <div className="w-[12vw] h-full lg:block hidden">
         <SideNavbars />
       </div>
-      <div className="lg:w-[87vw] w-full  shadow-2xl h-full overflow-y-scroll">
+      <div className="lg:w-[88vw] w-full  shadow-2xl h-full overflow-y-scroll">
         <DefaultHeader />
         <div className="lg:pt-[80px] pt-[50px]">
           <Outlet />
@@ -124,7 +112,7 @@ const Sidenav = () => {
         <SideNavbars />
       </Drawer>
       <RxHamburgerMenu
-        className="cursor-pointer top-0 right-0 z-50 bg-primary !text-xl p-1 !text-secondary absolute lg:hidden block"
+        className="cursor-pointer top-4 right-2 z-50 bg-primary !text-xl p-1 !text-secondary absolute lg:hidden block"
         onClick={() => {
           setOpen(true);
         }}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { IconHelper } from "../../helper/Icon_helper";
 import { Button, Divider, Form, Input, notification } from "antd";
 import { changePassword } from "../../helper/api_helper";
@@ -33,38 +33,15 @@ const Profile = () => {
         </h1>
       </div>
       <Divider />
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleChnagePassword}
-        className="flex flex-col gap-y-4"
-      >
-        <Form.Item
-          label="Enter Old Password"
-          name="old_password"
-          rules={[{ required: true, message: "Enter New Password" }]}
-        >
-          <Input
-            placeholder="Enter Old Password"
-            className="w-[400px] !antd_input"
-          />
+      <Form form={form} layout="vertical" onFinish={handleChnagePassword} className="flex flex-col gap-y-4">
+        <Form.Item label="Enter Old Password" name="old_password" rules={[{ required: true, message: "Enter New Password" }]}>
+          <Input placeholder="Enter Old Password" className="!antd_input" />
         </Form.Item>
-        <Form.Item
-          label="Enter Password"
-          name="password"
-          rules={[{ required: true, message: "Enter New Password" }]}
-        >
-          <Input
-            placeholder="Enter New Password"
-            className="w-[400px] !antd_input"
-          />
+        <Form.Item label="Enter Password" name="password" rules={[{ required: true, message: "Enter New Password" }]}>
+          <Input placeholder="Enter New Password" className="!antd_input" />
         </Form.Item>
         <Form.Item>
-          <Button
-            loading={loading}
-            htmlType="submit"
-            className="primary_btn !w-fit"
-          >
+          <Button loading={loading} htmlType="submit" className="primary_btn !w-fit">
             Change Password
           </Button>
         </Form.Item>

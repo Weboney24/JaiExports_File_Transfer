@@ -62,7 +62,6 @@ const MyTransfer = () => {
     }
   };
 
-
   const handleRemovePassword = async (value) => {
     try {
       let formData = {
@@ -89,7 +88,7 @@ const MyTransfer = () => {
     {
       title: "S.NO",
       dataIndex: "_id",
-      width: 50,
+      width: 100,
       align: "center",
       render: (data, alldata, index) => {
         return <span className="font-bold !text-[12px]">{index + 1}</span>;
@@ -98,17 +97,17 @@ const MyTransfer = () => {
 
     {
       title: <div className="flex items-center justify-center gap-x-2 !text-[12px]">Count</div>,
-      width: 100,
+      width: 150,
       dataIndex: "count",
       render: (values) => {
         return <div className=" center_div !text-[12px]">{values}</div>;
       },
     },
     {
-      title: "Link",
+      title: "Link / Email Id",
       dataIndex: "trackgmail",
       align: "center",
-      width: 80,
+      width: 180,
       render: (data, allData) => {
         return (
           <div
@@ -126,20 +125,20 @@ const MyTransfer = () => {
       title: "Recipient Count",
       align: "center",
       dataIndex: "trackgmail",
-      width: 100,
+      width: 180,
       render: (data) => {
         return <div className="text-primary font-bold line-clamp-1 !text-[12px]">{data?.length - 1}</div>;
       },
     },
     {
       title: "Transfer Name",
-
+      align: "center",
       dataIndex: "transfer_name",
-      width: 200,
+      width: 230,
       render: (data) => {
         return (
           <Tooltip title={data}>
-            <div className="capitalize !text-[12px] line-clamp-1">{data}</div>
+            <div className="capitalize !text-[12px] px-2 line-clamp-1">{data}</div>
           </Tooltip>
         );
       },
@@ -177,10 +176,11 @@ const MyTransfer = () => {
       title: <div>Transfer / Expired Date </div>,
       width: 200,
       dataIndex: "expire_date",
+      align: "center",
       render: (data, all) => {
         let expDate = moment.duration(moment(data).diff(new Date()));
         return (
-          <div className={`flex gap-x-2 !text-[12px] !px-2 ${expDate.seconds() < 0 ? "text-secondary" : ""} `}>
+          <div className={`flex gap-x-2 !text-[12px] justify-center ${expDate.seconds() < 0 ? "text-secondary" : ""} `}>
             <div>{moment(all.createdAt).format("DD/MM/YYYY")}</div> - &nbsp;
             {expDate.seconds() < 0 ? <span className="text-red-500">Expired</span> : `${moment(data).format("DD/MM/YYYY")}`}
           </div>
@@ -331,7 +331,7 @@ const MyTransfer = () => {
       </div>
       <Divider />
 
-      <Table loading={loading} columns={columns} dataSource={data} scroll={{ x: 200 }} size="small" pagination={{ pageSize: 20, position: ["bottomCenter"] }} />
+      <Table loading={loading} bordered columns={columns} dataSource={data} scroll={{ x: 1000 }} size="small" pagination={{ pageSize: 20, position: ["bottomCenter"] }} />
 
       <Modal destroyOnClose open={open.status} footer={false} closable={false} title={expire ? "Edit Expiry Date" : `${`${open.data ? "Update" : "Add"} File Password`}`}>
         <Form layout="vertical" className="pt-2" onFinish={handleFinish} form={form}>
@@ -349,8 +349,9 @@ const MyTransfer = () => {
                   message: "Please enter a file password",
                 },
               ]}
+              className="w-full"
             >
-              <Input.Password placeholder="Enter File Password" className="antd_input w-[400px] !lining-nums" />
+              <Input.Password placeholder="Enter File Password" className="antd_input w-full !lining-nums" />
             </Form.Item>
           )}
           <Form.Item>
@@ -374,11 +375,10 @@ const MyTransfer = () => {
         onCancel={() => {
           setExpandView([]);
         }}
-        width={600}
-        className="!center_div"
+        className="lg:!w-[50%]"
         title={<h1 className="capitalize font-Poppins">{_.get(expandView, "allData.transfer_name", "")}</h1>}
       >
-        <RecipientsTableView row={true} tableData={expandView.data} restData={expandView.allData} from="viewTransfer" setExpandView={setExpandView} fetchData={fetchData} />
+        <RecipientsTableView row={true} title={_.get(expandView, "allData.transfer_name", "")} tableData={expandView.data} restData={expandView.allData} from="viewTransfer" setExpandView={setExpandView} fetchData={fetchData} />
       </Modal>
     </div>
   );

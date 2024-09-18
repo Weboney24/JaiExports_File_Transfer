@@ -136,7 +136,7 @@ const Users = () => {
       key: "email",
       dataIndex: "email",
       render: (data) => {
-        return <h1 className="capitalize !text-[12px]">{data}</h1>;
+        return <h1 className="lowercase first-line:!text-[12px]">{data}</h1>;
       },
     },
     {

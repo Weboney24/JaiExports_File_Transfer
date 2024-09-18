@@ -80,7 +80,7 @@ const router = createBrowserRouter([
     element: <NotAccess />,
   },
   {
-    path: "/files/:id",
+    path: "/files/:filename/:id",
     element: <Files />,
   },
   {

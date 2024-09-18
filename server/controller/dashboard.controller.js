@@ -4,7 +4,7 @@ const { dateFilter } = require("../helper/date_helper");
 const fs = require("fs");
 const os = require("os");
 const bcrypt = require("bcrypt");
-
+const axios = require("axios");
 const _ = require("lodash");
 const moment = require("moment");
 const path = require("path");
@@ -128,7 +128,7 @@ const getTodayTransfers = async (req, res) => {
 const filterByDate = async (req, res) => {
   try {
     const result = await Transfer.aggregate([
-      // Match transfers belonging to the specified user
+     
       {
         $match: {
           createdAt: {
@@ -137,7 +137,7 @@ const filterByDate = async (req, res) => {
           },
         },
       },
-      // Group by user_id and count the number of transfers
+      
       {
         $group: {
           _id: "$user_id",
@@ -147,7 +147,7 @@ const filterByDate = async (req, res) => {
       },
       {
         $lookup: {
-          from: "Users", // Assuming the collection name is "Users"
+          from: "Users", 
           localField: "_id",
           foreignField: "_id",
           as: "user",
@@ -158,7 +158,7 @@ const filterByDate = async (req, res) => {
           _id: 1,
           transferCount: 1,
           transfers: 1,
-          name: { $arrayElemAt: ["$user.name", 0] }, // Get the name from the array
+          name: { $arrayElemAt: ["$user.name", 0] },
         },
       },
     ]);
@@ -239,13 +239,19 @@ const updateDownloadCount = async (req, res) => {
       return res.link === file_url;
     });
 
+    const ipInfo = await axios.get("https://ipinfo.io/json");
+
     let mailData = {
       senderEmail: _.get(fetchGmail, "[0].gmail", ""),
       transfername: _.get(fileDetails, "[0].transfer_name", ""),
       password: _.get(fileDetails, "[0].transfer_password", "") || "No Password",
       expired_date: moment(_.get(fileDetails, "[0].expire_date", "")).format("DD/MM/YYYY"),
       message: _.get(fileDetails, "[0].transfer_description", "") || "No Message",
-      seperate_link: `${req.body.client_url}`,
+      seperate_link: `${req.body.client_url}${file_url}`,
+      ip_info: _.get(ipInfo, "data.ip", ""),
+      country: _.get(ipInfo, "data.country", ""),
+      region: _.get(ipInfo, "data.region", ""),
+      timezone: _.get(ipInfo, "data.timezone", ""),
     };
 
     await sendMailWithHelper(_.get(finduserEmail, "[0].email", ""), mailData, "download count");

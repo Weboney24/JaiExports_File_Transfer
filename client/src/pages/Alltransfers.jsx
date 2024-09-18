@@ -50,7 +50,7 @@ const AllTransfers = () => {
       render: (data) => {
         return (
           <Tooltip title={_.get(data, "name", "")}>
-            <h1 className={`capitalize ${_.get(data, "name", "") === "admin" ? "text-secondary" : "text-secondary"} font-semibold cursor-pointer  !line-clamp-1 !text-[12px]  gap-x-2`}>{_.get(data, "name", "")}</h1>
+            <h1 className={`capitalize ${_.get(data, "name", "") === "admin" ? "text-secondary" : "text-secondary"} pl-2 font-semibold cursor-pointer  !line-clamp-1 !text-[12px]  gap-x-2`}>{_.get(data, "name", "")}</h1>
           </Tooltip>
         );
       },
@@ -76,10 +76,10 @@ const AllTransfers = () => {
       },
     },
     {
-      title: "Link",
+      title: "Link / Email Id",
       dataIndex: "trackgmail",
       align: "center",
-      width: 80,
+      width: 100,
       render: (data, allData) => {
         return (
           <div
@@ -104,13 +104,13 @@ const AllTransfers = () => {
     },
     {
       title: "Transfer Name",
-
+      align: "center",
       dataIndex: "transfer_name",
       width: 200,
       render: (data) => {
         return (
           <Tooltip title={data}>
-            <div className="capitalize !text-[12px] line-clamp-1 ">{data}</div>
+            <div className="capitalize !text-[12px] line-clamp-1 pl-2">{data}</div>
           </Tooltip>
         );
       },
@@ -147,14 +147,14 @@ const AllTransfers = () => {
     {
       title: <div>Transfer / Expired Date </div>,
       width: 200,
-
+      align: "center",
       dataIndex: "expire_date",
       render: (data, all) => {
         let expDate = moment.duration(moment(data).diff(new Date()));
         return (
-          <div className={`flex gap-x-2 !text-[12px]  !px-2 ${expDate.seconds() < 0 ? "text-secondary" : ""} `}>
-            <div>{moment(all.createdAt).format("DD-MMMM-YYYY")}</div> / &nbsp;
-            {expDate.seconds() < 0 ? <span className="text-red-500">Expired</span> : `${moment(data).format("DD-MMMM-YYYY")}`}
+          <div className={`flex gap-x-2 !text-[12px] justify-center  !px-2 ${expDate.seconds() < 0 ? "text-secondary" : ""} `}>
+            <div>{moment(all.createdAt).format("DD/MM/YYYY")}</div> - &nbsp;
+            {expDate.seconds() < 0 ? <span className="text-red-500">Expired</span> : `${moment(data).format("DD/MM/YYYY")}`}
           </div>
         );
       },
@@ -183,7 +183,7 @@ const AllTransfers = () => {
       </div>
       <Divider />
 
-      <Table scroll={{ x: 100 }} bordered columns={columns} dataSource={data} pagination={{ pageSize: 20, position: ["bottomCenter"] }} size="small" />
+      <Table scroll={{ x: 1200 }} bordered columns={columns} dataSource={data} pagination={{ pageSize: 20, position: ["bottomCenter"] }} size="small" />
       <Modal
         open={!_.isEmpty(links)}
         footer={false}
@@ -191,10 +191,10 @@ const AllTransfers = () => {
         onCancel={() => {
           setLinks([]);
         }}
-        width={600}
-        className="!center_div"
+        className="lg:!w-[50%]"
+        title={<h1 className="capitalize font-Poppins">{_.get(links, "allData.transfer_name", "")}</h1>}
       >
-        <RecipientsTableView tableData={links.data} from="viewTransfer" />
+        <RecipientsTableView title={_.get(links, "allData.transfer_name", "")} tableData={links.data} from="viewTransfer" />
       </Modal>
     </div>
   );

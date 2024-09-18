@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { MdQrCode2 } from "react-icons/md";
 import { addMoreRecipients, client_url, resendAllMails } from "../helper/api_helper";
 
-const RecipientsTableView = ({ tableData, from, row, restData, fetchData, setExpandView }) => {
+const RecipientsTableView = ({ tableData, from, row, restData, fetchData, setExpandView, title }) => {
   const [open, setOpen] = useState(false);
 
   const [selectedMails, setSelectedMails] = useState([]);
@@ -36,12 +36,12 @@ const RecipientsTableView = ({ tableData, from, row, restData, fetchData, setExp
             />
             <Typography.Paragraph
               copyable={{
-                text: `${client_url}${data}`,
+                text: `${client_url}${title}/${data}`,
               }}
               className="pt-4"
             ></Typography.Paragraph>
 
-            <Link target="_blank" to={`${client_url}${data}`}>
+            <Link target="_blank" to={`${client_url}${title}/${data}`}>
               <IconHelper.clickLink className={`text-secondary !text-[12px]`} />
             </Link>
           </div>
@@ -145,6 +145,7 @@ const RecipientsTableView = ({ tableData, from, row, restData, fetchData, setExp
         pagination={false}
         dataSource={from ? tableData : _.get(tableData, "data.all", [])}
         size="small"
+        scroll={{ x: 500 }}
         rowSelection={row ? rowSelection : false}
         rowKey={(result) => {
           return result.link;
@@ -161,7 +162,7 @@ const RecipientsTableView = ({ tableData, from, row, restData, fetchData, setExp
             </Button>
           )}
           {addMore && (
-            <Form layout="vertical" onFinish={handleAddMoreEmail} form={form}>
+            <Form layout="vertical" onFinish={handleAddMoreEmail} form={form} className="w-full">
               <Form.Item
                 label="Select Recipient Email"
                 name="recipient_email"
@@ -171,11 +172,12 @@ const RecipientsTableView = ({ tableData, from, row, restData, fetchData, setExp
                     message: "Please add/select a recipient email",
                   },
                 ]}
+                className="w-full"
               >
-                <Select virtual={false} mode="tags" className="antd_input  !min-h-[10px] !w-[640px] focus:!border-none hover:border-none" tokenSeparators={[","]} placeholder="Select Recipient Email"></Select>
+                <Select virtual={false} mode="tags" className="antd_input  !min-h-[10px]  focus:!border-none hover:border-none" tokenSeparators={[","]} placeholder="Select Recipient Email"></Select>
               </Form.Item>
 
-              <div className="flex justify-start gap-x-10">
+              <div className="flex justify-start md:flex-row flex-col gap-x-10">
                 <Form.Item>
                   <Button loading={loading} block className="primary_btn !w-[150px]" htmlType="submit">
                     Add Recipient
@@ -220,7 +222,7 @@ const RecipientsTableView = ({ tableData, from, row, restData, fetchData, setExp
         closable={false}
         footer={false}
       >
-        <QRCode className="!w-[300px] !h-[300px]" value={`${client_url}${open.link}`} />
+        <QRCode className="!w-full !h-full" value={`${client_url}${title}/${open.link}`} />
       </Modal>
     </div>
   );

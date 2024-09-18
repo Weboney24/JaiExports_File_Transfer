@@ -10,10 +10,10 @@
     @apply flex items-center justify-center;
   }
   .antd_input {
-    @apply lg:w-[300px] h-[40px]  !shadow-inner  placeholder:!text-gray-500 font-Poppins border-gray-200 hover:border-gray-200 focus:border-transparent;
+    @apply md:w-[300px] h-[40px] w-[96%] !shadow-inner  placeholder:!text-gray-500 font-Poppins border-gray-200 hover:border-gray-200 focus:border-transparent !rounded-lg;
   }
   .primary_btn {
-    @apply antd_input !w-full !shadow-lg bg-primary text-white border-none hover:!bg-primary hover:!text-white;
+    @apply antd_input md:!w-[300px] h-[40px] !w-[96%] !shadow-lg bg-primary text-white border-none hover:!bg-primary hover:!text-white;
   }
 }
 
