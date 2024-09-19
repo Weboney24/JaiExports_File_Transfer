@@ -84,6 +84,10 @@ const router = createBrowserRouter([
     element: <Files />,
   },
   {
+    path: "/files/:id",
+    element: <Files />,
+  },
+  {
     path: "/settings",
     element: <Sidenav />,
     children: [

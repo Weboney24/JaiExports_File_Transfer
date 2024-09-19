@@ -128,7 +128,6 @@ const getTodayTransfers = async (req, res) => {
 const filterByDate = async (req, res) => {
   try {
     const result = await Transfer.aggregate([
-     
       {
         $match: {
           createdAt: {
@@ -137,7 +136,7 @@ const filterByDate = async (req, res) => {
           },
         },
       },
-      
+
       {
         $group: {
           _id: "$user_id",
@@ -147,7 +146,7 @@ const filterByDate = async (req, res) => {
       },
       {
         $lookup: {
-          from: "Users", 
+          from: "Users",
           localField: "_id",
           foreignField: "_id",
           as: "user",
@@ -241,13 +240,15 @@ const updateDownloadCount = async (req, res) => {
 
     const ipInfo = await axios.get("https://ipinfo.io/json");
 
+    let link = `${req.body.client_url}${_.get(fileDetails, "[0].transfer_name", "")}/${file_url}`.split(" ").join("_");
+
     let mailData = {
       senderEmail: _.get(fetchGmail, "[0].gmail", ""),
       transfername: _.get(fileDetails, "[0].transfer_name", ""),
       password: _.get(fileDetails, "[0].transfer_password", "") || "No Password",
       expired_date: moment(_.get(fileDetails, "[0].expire_date", "")).format("DD/MM/YYYY"),
       message: _.get(fileDetails, "[0].transfer_description", "") || "No Message",
-      seperate_link: `${req.body.client_url}${file_url}`,
+      seperate_link: link,
       ip_info: _.get(ipInfo, "data.ip", ""),
       country: _.get(ipInfo, "data.country", ""),
       region: _.get(ipInfo, "data.region", ""),

@@ -42,17 +42,19 @@ const makeTransfer = async (req, res) => {
     await TransferSchema.create(formData);
 
     if (_.get(data, "custom_options", false)) {
+      let link = `${data.client_url}${formData.transfer_name}/${formData.transfer_link}`.split(" ").join("_");
+
       let mailData = {
         senderEmail: _.get(userData, "[0].email", ""),
         transfername: formData.transfer_name,
         password: formData.transfer_password || "No Password",
         expired_date: moment(formData.custom_expire_date || formData.expire_date).format("DD/MM/YYYY"),
         message: formData.transfer_description || "No Message",
-        seperate_link: `${data.client_url}${formData.transfer_link}`,
+        seperate_link: link,
       };
 
       formData.trackgmail.map(async (res) => {
-        mailData.seperate_link = `${data.client_url}${res.link}`;
+        mailData.seperate_link = `${data.client_url}${formData.transfer_name}/${res.link}`.split(" ").join("_");
         await sendMailWithHelper(res.gmail, mailData, "generateLink");
       });
       formData.trackgmail;
@@ -135,7 +137,8 @@ const resendEmails = async (req, res) => {
     };
 
     _.get(req, "body.resend_mails", []).map(async (res) => {
-      mailData.seperate_link = `${req.body.client_url}${res.link}`;
+      mailData.seperate_link = `${req.body.client_url}${_.get(fileDetails, "[0].transfer_name", "")}/${res.link}`.split(" ").join("_");
+
       await sendMailWithHelper(res.gmail, mailData, "generateLink");
     });
     return res.status(200).send({ message: "success" });

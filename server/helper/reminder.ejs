@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New File Generated Notification</title>
+    <title>File Download Notification</title>
     <style>
       table {
         width: 100%;
@@ -38,7 +38,7 @@
       <div class="header">
         <img src="http://jai-india.in/assets/logo-tWICtb1x.png" alt="logo" style="width: 60px; height: auto" />
         <h1>Jai Export Enterprises</h1>
-        <h4><%= transfername %></h4>
+        <p>This is a reminder that the link you created hasn't been downloaded by your recipients yet and will expire soon.</p>
       </div>
       <table>
         <thead>
@@ -49,12 +49,12 @@
         </thead>
         <tbody>
           <tr>
-            <td>File Link</td>
-            <td><%= seperate_link %></td>
+            <td>Transfer Name</td>
+            <td><%= transfername %></td>
           </tr>
           <tr>
-            <td>From</td>
-            <td><%= senderEmail %></td>
+            <td>File Link</td>
+            <td><%= seperate_link %></td>
           </tr>
           <tr>
             <td>Password</td>
@@ -65,7 +65,7 @@
             <td><%= message %></td>
           </tr>
           <tr>
-            <td>Expired Date</td>
+            <td>Expiry Date</td>
             <td><%= expired_date %></td>
           </tr>
         </tbody>

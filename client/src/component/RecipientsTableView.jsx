@@ -26,6 +26,7 @@ const RecipientsTableView = ({ tableData, from, row, restData, fetchData, setExp
       dataIndex: "link",
       align: "center",
       render: (data, all) => {
+        let link = `${client_url}${title}/${data}`.split(" ").join("_");
         return (
           <div className="flex items-center gap-x-6 justify-center">
             <MdQrCode2
@@ -36,12 +37,12 @@ const RecipientsTableView = ({ tableData, from, row, restData, fetchData, setExp
             />
             <Typography.Paragraph
               copyable={{
-                text: `${client_url}${title}/${data}`,
+                text: link,
               }}
               className="pt-4"
             ></Typography.Paragraph>
 
-            <Link target="_blank" to={`${client_url}${title}/${data}`}>
+            <Link target="_blank" to={link}>
               <IconHelper.clickLink className={`text-secondary !text-[12px]`} />
             </Link>
           </div>

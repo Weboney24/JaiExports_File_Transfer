@@ -31,6 +31,10 @@ const transferSchema = new Schema(
       type: Number,
       default: 0,
     },
+    expiry_mail: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     collection: "transfer",
