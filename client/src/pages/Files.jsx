@@ -27,7 +27,6 @@ const Files = () => {
 
   const fetchData = async () => {
     try {
-      
       const result = await getPerticularFile(_.get(navigate, "pathname", "").split("/")[3]);
 
       setdatas(_.get(result, "data.data", []));
@@ -66,7 +65,7 @@ const Files = () => {
         ...value,
         file_url: _.get(navigate, "pathname", "").split("/")[3],
       };
-      
+
       const result = await verifyFilePassword(formdata);
       setdatas(_.get(result, "data.data", []));
       setOpen(false);
@@ -86,6 +85,7 @@ const Files = () => {
         user_id: _.get(datas, "[0].user_id", []),
         file_url: _.get(navigate, "pathname", "").split("/")[3],
         client_url: `http://jai-india.in/files/${_.get(navigate, "pathname", "").split("/")[2]}/`,
+        file_name: _.get(values, "name", ""),
       });
 
       axios
@@ -115,12 +115,13 @@ const Files = () => {
         user_id: _.get(datas, "[0].user_id", []),
         file_url: _.get(navigate, "pathname", "").split("/")[3],
         client_url: `http://jai-india.in/files/${_.get(navigate, "pathname", "").split("/")[2]}/`,
+        file_name: "All Files",
       });
       _.get(datas, "[0].files", []).map((result) => {
         axios
           .get(`${server_url}/${result.location}`, {
             responseType: "blob",
-          }) 
+          })
           .then((res) => {
             fileDownload(res.data, result.name);
           });

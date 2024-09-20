@@ -228,7 +228,7 @@ const sendMail = async (req, res) => {
 
 const updateDownloadCount = async (req, res) => {
   try {
-    const { id, user_id, file_url } = req.body;
+    const { id, user_id, file_url, file_name } = req.body;
 
     await Transfer.findByIdAndUpdate({ _id: id }, { $inc: { count: 1 } });
     const finduserEmail = await User.find({ _id: user_id });
@@ -253,6 +253,7 @@ const updateDownloadCount = async (req, res) => {
       country: _.get(ipInfo, "data.country", ""),
       region: _.get(ipInfo, "data.region", ""),
       timezone: _.get(ipInfo, "data.timezone", ""),
+      file_name: file_name,
     };
 
     await sendMailWithHelper(_.get(finduserEmail, "[0].email", ""), mailData, "download count");

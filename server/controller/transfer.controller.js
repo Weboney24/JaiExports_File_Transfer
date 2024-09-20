@@ -168,7 +168,7 @@ const addMoreRecipients = async (req, res) => {
     );
 
     _.get(req, "body.trackgmail", []).map(async (res) => {
-      mailData.seperate_link = `${req.body.client_url}${res.link}`;
+      mailData.seperate_link = `${req.body.client_url}${_.get(fileDetails, "[0].transfer_name", "")}/${res.link}`.split(" ").join("_");
       await sendMailWithHelper(res.gmail, mailData, "generateLink");
     });
     return res.status(200).send({ message: "success" });

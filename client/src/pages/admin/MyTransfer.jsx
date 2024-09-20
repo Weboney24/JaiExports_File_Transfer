@@ -96,8 +96,8 @@ const MyTransfer = () => {
     },
 
     {
-      title: <div className="flex items-center justify-center gap-x-2 !text-[12px]">Count</div>,
-      width: 150,
+      title: <div className="flex items-center justify-center gap-x-2 !text-[12px]">No. of Download Counts</div>,
+      width: 200,
       dataIndex: "count",
       render: (values) => {
         return <div className=" center_div !text-[12px]">{values}</div>;
