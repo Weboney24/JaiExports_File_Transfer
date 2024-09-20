@@ -30,6 +30,7 @@ const Transfer = () => {
   const [loading, setLoading] = useState(false);
 
   const [options, setOptions] = useState(true);
+  const [transfername, setTransfername] = useState("");
 
   const { Dragger } = Upload;
 
@@ -79,6 +80,7 @@ const Transfer = () => {
           },
         ];
       }
+      setTransfername(values.transfer_name);
       values.transfer_link = UrlHelper();
       values.custom_options = options === "email";
 
@@ -128,12 +130,14 @@ const Transfer = () => {
 
   const handleMore = () => {
     setModalData("");
+    setTransfername("");
     setOpen(false);
     form.resetFields();
   };
 
   const handleViewMore = () => {
     setModalData("");
+    setTransfername("");
     setOpen(false);
     navigate("/my_transfer");
   };
@@ -262,6 +266,7 @@ const Transfer = () => {
         </div>
         {/* <Divider /> */}
       </div>
+     
 
       <Modal width={loading ? 300 : 600} open={open || loading} footer={false} onCancel={handleMore} centered closable={false}>
         {loading ? (
@@ -277,7 +282,7 @@ const Transfer = () => {
               title={<h1 className="!text-[16px] font-bold py-2">Files have been successfully uploaded and sent to all recipients.</h1>}
               extra={[
                 <div>
-                  <RecipientsTableView tableData={modalData} />
+                  <RecipientsTableView tableData={modalData} title={transfername} />
                   <div className="flex items-center gap-x-4 justify-center py-10">
                     <Button type="primary" key="console" onClick={handleMore}>
                       Transfer More
