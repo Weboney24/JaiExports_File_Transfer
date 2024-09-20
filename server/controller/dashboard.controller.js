@@ -240,7 +240,7 @@ const updateDownloadCount = async (req, res) => {
 
     const ipInfo = await axios.get("https://ipinfo.io/json");
 
-    let link = `${req.body.client_url}${_.get(fileDetails, "[0].transfer_name", "")}/${file_url}`.split(" ").join("_");
+    let link = `${req.body.client_url}${file_url}`.split(" ").join("_");
 
     let mailData = {
       senderEmail: _.get(fetchGmail, "[0].gmail", ""),
