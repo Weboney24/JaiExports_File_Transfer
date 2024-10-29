@@ -11,7 +11,7 @@ import { MdTransferWithinAStation } from "react-icons/md";
 import { LuFileSymlink } from "react-icons/lu";
 import { FaExternalLinkAlt, FaRegFileExcel, FaRegFilePdf } from "react-icons/fa";
 import { CiFileOn } from "react-icons/ci";
-import { FiDownload, FiDownloadCloud } from "react-icons/fi";
+import { FiDownload, FiDownloadCloud, FiSearch } from "react-icons/fi";
 import { RiUserShared2Line } from "react-icons/ri";
 import { MdKey } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
@@ -61,6 +61,7 @@ export const IconHelper = {
   editIcon: MdEditNote,
   deleteIcon2: MdOutlineDeleteOutline,
   expireIcon: MdOutlineUpdate,
+  SEARCH_ICON: FiSearch,
 };
 
 export const navbar = [
@@ -103,12 +104,9 @@ export const navbar = [
 ];
 
 export const copyHelper = (value) => {
-  
-
   try {
     window?.navigator?.clipboard?.writeText(value);
     message.success("Link copied");
-    
   } catch (err) {
     console.log(err);
   }

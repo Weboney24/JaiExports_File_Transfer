@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import _ from "lodash";
 import { getLinkStatus, getPerticularFile, server_url, updateDownloadCount, verifyFilePassword } from "../helper/api_helper";
-import { collectFileSize, fileTypeHelper } from "../helper/Icon_helper";
+import { collectFileSize, fileTypeHelper, IconHelper } from "../helper/Icon_helper";
 import { filesize } from "filesize";
-import { Modal, Form, Input, Button, notification, Card, Avatar, Result } from "antd";
+import { Modal, Form, Input, Button, notification, Card, Avatar, Result, Tooltip, Tag } from "antd";
 import { Logo } from "../helper/ImageHelper";
 import moment from "moment";
 import fileDownload from "js-file-download";
 import axios from "axios";
-import { DownloadOutlined } from "@ant-design/icons";
+import { DownloadOutlined, FrownOutlined, SmallDashOutlined, SmileOutlined } from "@ant-design/icons";
 
 const Files = () => {
   const navigate = useLocation();
@@ -133,80 +133,95 @@ const Files = () => {
     }
   };
 
+
+  const DownloadALLComponent = () => {
+    return (
+      <div
+        className="md:w-fit w-full !bg-white !h-[50px] hover:scale-110 transition-all duration-500 !cursor-pointer !text-primary !border !font-Poppins  border-primary center_div px-4 rounded-lg shadow-sm"
+        onClick={() => {
+          handleDownloadAll();
+        }}
+      >
+        <p className="!font-['Poppins'] center_div gap-x-4"> {collectFileSize(_.get(datas, "[0].files", []))?.textAlise} - Download All <IconHelper.downloadIcon /></p>
+      </div>
+    );
+  }
+
   return (
-    <div className={`w-screen ${open ? "invisible" : "visible"} min-h-screen overflow-hidden pb-10 center_div bg-gradient-to- from-[#f7f7f7] to-[rgba(255,250,180,0.03)] bg-no-repeat bg-cover bg-center text-primary items-start font-Poppins lining-nums`}>
+    <div className={`w-screen ${open ? "invisible" : "visible"} h-screen overflow-hidden center_div relative bg-white  !font-['Poppins'] bg-no-repeat bg-cover bg-center  items-start lining-nums`}>
       {loading ? (
-        <img src="https://cdn.dribbble.com/users/2015153/screenshots/6592242/progess-bar2.gif" alt="" />
+        <div className="m-auto size-[300px] bg-white p-4  rounded-full   center_div flex-col">
+          <img src={Logo} className="size-[120px] !object-contain" />
+          <h1 className="py-2 font-medium text-primary text-2xl !font-Poppins ">Jai Export Enterprises</h1>
+          <h1 className="py-2 font-medium text-black text-xl !font-Poppins animate-bounce absolute bottom-[50px]">Just a second...</h1>
+        </div>
+      ) : expired ? (
+        <div className="!w-screen !h-screen center_div">
+          <Result
+            status="warning"
+            title="Oops, there was a problem with your link"
+            icon={<FrownOutlined />}
+            subTitle={
+              <span>
+                It seems your link has expired or wasn&apos;t copied correctly.
+                <br />
+                Please check and try again, or ask your friend to send another one.
+              </span>
+            }
+          />
+        </div>
       ) : (
-        <div className=" flex w-[1366px] z-50 flex-col lg:mt-[15vh] mt-[6vh] justify-center  items-center px-4  lg:px-10 gap-y-1">
-          <div className="flex  flex-col  items-center gap-y-6 justify-center w-full z-50 ">
-            <img src={Logo} alt="" className="lg:w-[5%] w-[20%]  rounded-lg" />
-            <h1 className="text-secondary text-2xl tracking-wider font-Poppins">Jai Export Enterprises</h1>
+        <div className="w-screen !h-screen overflow-scroll relative  flex gap-x-2 flex-col">
+          <div className="w-full px-10  center_div md:flex-row flex-col md:py-0 py-5 min-h-[80px] md:border-b md:mb-0 mb-10 justify-between">
+            <div className="flex items-end gap-x-2 md:flex-row flex-col md:gap-y-1 gap-y-4">
+              <img src={Logo} className="w-[50px]  bg-white !mx-auto  !object-contain " />
+              <h1 className="!text-primary !font-Poppins">Jai Export Enterprises</h1>
+            </div>
+            {_.get(datas, "[0].transfer_name", [])}
+
+            <div className="md:block hidden">
+              <DownloadALLComponent />
+            </div>
           </div>
-          {expired ? (
-            <Result
-              status="404"
-              title="Oops, there was a problem with your link"
-              subTitle={
-                <span>
-                  It seems your link has expired or wasn&apos;t copied correctly.
-                  <br />
-                  Please check and try again, or ask your friend to send another one.
-                </span>
-              }
-            />
-          ) : (
-            <>
-              <div className="flex justify-center flex-col items-center !w-[70%]">
-                <div className=" pt-2 flex items-center capitalize justify-start gap-x-2">
-                  <div className="w-[150px] text-right  px-2 line-clamp-1 text-slate-800">Transfer Name</div>
-                  {_.get(datas, "[0].transfer_name", [])}
-                </div>
-
-                <div className="capitalize pt-2 flex items-start justify-start gap-x-2">
-                  <div className="w-[150px] text-right  px-2 line-clamp-1 text-slate-800">Total File</div>
-                  {collectFileSize(_.get(datas, "[0].files", []))?.textAlise}
-                </div>
-
-                <div className="capitalize pt-2 flex items-start justify-start gap-x-2">
-                  <div className="w-[150px] text-right  px-2 line-clamp-1 text-slate-800">Expired Date</div>
-                  {moment(_.get(datas, "[0].expire_date", [])).format("DD-MMMM-YYYY")}
-                </div>
-              </div>
-
-              <div className="flex flex-wrap w-[80%] justify-center gap-5 pt-4">
-                {_.get(datas, "[0].files", []).map((res, index) => {
-                  return (
-                    <Card key={index} hoverable loading={loading} className="w-[40%]  min-h-[120px] relative">
-                      <Card.Meta avatar={<Avatar src={fileTypeHelper(res.mimetype)} />} title={filesize(res.size)} description={<h1 className="line-clamp-2">{res.name}</h1>} />
-                      <div className="absolute top-4 right-6 ">
-                        <DownloadOutlined
-                          className="cursor-pointer hover:text-primary"
-                          onClick={() => {
-                            handleDownload(res);
-                          }}
-                        />
-                      </div>
-                    </Card>
-                  );
-                })}
-              </div>
-              <Button
-                className="primary_btn !w-[30%] mt-10"
-                onClick={() => {
-                  handleDownloadAll();
-                }}
-              >
-                Download All
-              </Button>
-            </>
-          )}
+          <div className="!w-full md:px-10 py-4 flex flex-wrap md:gap-1 gap-2 center_div  lg:pb-0 pb-[100px]">
+            {_.get(datas, "[0].files", []).map((res, index) => {
+              return (
+                <Tooltip
+                  color={"#29354c"}
+                  title={
+                    <div className="!space-y-2">
+                      <h1>File Name : {res?.name}</h1>
+                      <h1>File Size : {filesize(res.size)}</h1>
+                    </div>
+                  }
+                  key={index}
+                >
+                  <div key={index} className="md:w-[250px] w-[90%] 2xl:w-[400px] shadow h-[80px] 2xl:h-[200px] transition-all group md:rounded-none rounded-2xl !bg-white relative  duration-500 hover:!bg-primary center_div justify-between items-center px-4">
+                    <Avatar shape="square" src={fileTypeHelper(res.mimetype)} />
+                    <div className="md:w-[50%] w-[70%]">
+                      <h1 className="line-clamp-1 !text-[12px] group-hover:text-white">{res.name}</h1>
+                      <div className="!text-[12px] group-hover:text-white">{filesize(res.size)}</div>
+                    </div>
+                    <IconHelper.downloadIcon
+                      className="cursor-pointer hover:text-primary group-hover:text-white hover:!scale-125"
+                      onClick={() => {
+                        handleDownload(res);
+                      }}
+                    />
+                  </div>
+                </Tooltip>
+              );
+            })}
+          </div>
+          <div className="md:hidden block fixed bottom-0 !w-full">
+            <DownloadALLComponent />
+          </div>
         </div>
       )}
-      <Modal open={open} closable={false} footer={false} centered title={<span className="!font-Texturina !text-center">To view or access this data, you&apos;ll need to provide a password</span>}>
+      <Modal open={open} closable={false} footer={false} centered title={<span className="!font-Texturina !font-medium text-center">To view or access this data, you&apos;ll need to provide a password</span>}>
         <Form layout="vertical" className="pt-2" onFinish={handlePassword}>
           <Form.Item
-            label="File Password"
+            label={<h1 className="!font-Poppins font-medium">File Password</h1>}
             name="file_password"
             rules={[
               {
@@ -215,10 +230,10 @@ const Files = () => {
               },
             ]}
           >
-            <Input placeholder="Enter File Password" className="antd_input w-full lining-nums" />
+            <Input placeholder="Enter File Password" className="antd_input  w-full lining-nums" />
           </Form.Item>
           <Form.Item>
-            <Button htmlType="submit" block className="primary_btn mt-2">
+            <Button htmlType="submit" block className="primary_btn !w-full mt-2">
               Verify
             </Button>
           </Form.Item>
