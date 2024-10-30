@@ -80,12 +80,18 @@ const Files = () => {
   const handleDownload = async (values) => {
     try {
       setLoading(true);
+      const ipInfo = await axios.get("https://ipinfo.io/json");
       await updateDownloadCount({
         id: _.get(datas, "[0]._id", []),
         user_id: _.get(datas, "[0].user_id", []),
         file_url: _.get(navigate, "pathname", "").split("/")[3],
         client_url: `http://jai-india.in/files/${_.get(navigate, "pathname", "").split("/")[2]}/`,
         file_name: _.get(values, "name", ""),
+        ip_info: _.get(ipInfo, "data.ip", ""),
+        country: _.get(ipInfo, "data.country", ""),
+        region: _.get(ipInfo, "data.region", ""),
+        timezone: _.get(ipInfo, "data.timezone", ""),
+        city: _.get(ipInfo, "data.city", ""),
       });
 
       axios
@@ -110,13 +116,20 @@ const Files = () => {
   const handleDownloadAll = async () => {
     try {
       setLoading(true);
+      const ipInfo = await axios.get("https://ipinfo.io/json");
       await updateDownloadCount({
         id: _.get(datas, "[0]._id", []),
         user_id: _.get(datas, "[0].user_id", []),
         file_url: _.get(navigate, "pathname", "").split("/")[3],
         client_url: `http://jai-india.in/files/${_.get(navigate, "pathname", "").split("/")[2]}/`,
         file_name: "All Files",
+        ip_info: _.get(ipInfo, "data.ip", ""),
+        country: _.get(ipInfo, "data.country", ""),
+        region: _.get(ipInfo, "data.region", ""),
+        timezone: _.get(ipInfo, "data.timezone", ""),
+        city: _.get(ipInfo, "data.city", ""),
       });
+      
       _.get(datas, "[0].files", []).map((result) => {
         axios
           .get(`${server_url}/${result.location}`, {
@@ -133,7 +146,6 @@ const Files = () => {
     }
   };
 
-
   const DownloadALLComponent = () => {
     return (
       <div
@@ -142,10 +154,13 @@ const Files = () => {
           handleDownloadAll();
         }}
       >
-        <p className="!font-['Poppins'] center_div gap-x-4"> {collectFileSize(_.get(datas, "[0].files", []))?.textAlise} - Download All <IconHelper.downloadIcon /></p>
+        <p className="!font-['Poppins'] center_div gap-x-4">
+          {" "}
+          {collectFileSize(_.get(datas, "[0].files", []))?.textAlise} - Download All <IconHelper.downloadIcon />
+        </p>
       </div>
     );
-  }
+  };
 
   return (
     <div className={`w-screen ${open ? "invisible" : "visible"} h-screen overflow-hidden center_div relative bg-white  !font-['Poppins'] bg-no-repeat bg-cover bg-center  items-start lining-nums`}>

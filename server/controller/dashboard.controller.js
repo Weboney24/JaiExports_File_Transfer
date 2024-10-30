@@ -228,7 +228,7 @@ const sendMail = async (req, res) => {
 
 const updateDownloadCount = async (req, res) => {
   try {
-    const { id, user_id, file_url, file_name } = req.body;
+    const { id, user_id, file_url, file_name, ip_info, country, region, timezone, city } = req.body;
 
     await Transfer.findByIdAndUpdate({ _id: id }, { $inc: { count: 1 } });
     const finduserEmail = await User.find({ _id: user_id });
@@ -237,8 +237,6 @@ const updateDownloadCount = async (req, res) => {
     let fetchGmail = _.get(fileDetails, "[0].trackgmail", []).filter((res) => {
       return res.link === file_url;
     });
-
-    const ipInfo = await axios.get("https://ipinfo.io/json");
 
     let link = `${req.body.client_url}${file_url}`.split(" ").join("_");
 
@@ -249,10 +247,11 @@ const updateDownloadCount = async (req, res) => {
       expired_date: moment(_.get(fileDetails, "[0].expire_date", "")).format("DD/MM/YYYY"),
       message: _.get(fileDetails, "[0].transfer_description", "") || "No Message",
       seperate_link: link,
-      ip_info: _.get(ipInfo, "data.ip", ""),
-      country: _.get(ipInfo, "data.country", ""),
-      region: _.get(ipInfo, "data.region", ""),
-      timezone: _.get(ipInfo, "data.timezone", ""),
+      ip_info: ip_info,
+      country: country,
+      region: region,
+      timezone: timezone,
+      city: city,
       file_name: file_name,
     };
 
